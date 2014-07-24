@@ -1,0 +1,40 @@
+
+{
+	"description":" Used for testing FIRST and FOLLOW functions. ",
+	"symbols":{
+		"i": {"terminal":true},
+		"c": {"terminal":true},
+		"n": {"terminal":true},
+		"b": {"terminal":true},
+		"a": {"terminal":true},
+		"d": {"terminal":true},
+		"e": {"terminal":true},
+		"n": {"terminal":true},
+		"q": {"terminal":true}
+	},
+	"productions":{
+		"P": [
+			["i"],
+			["c"],
+			["n", "T", "S"]
+		],
+		"Q":[
+			["P"],
+			["a", "S"],
+			["d", "S", "c", "S", "T"]
+		],
+		"R":[
+			["b"],
+			[]
+		],
+		"S":[
+			["e"],
+			["R", "n"],
+			[]
+		],
+		"T":[
+			["R", "S", "q"]
+		]
+	},
+	"startSymbols": [ "P" ]
+}

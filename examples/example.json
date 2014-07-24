@@ -1,0 +1,25 @@
+
+{
+	"symbols":{
+		"id": { "terminal":true },
+		"plus": { "terminal":true },
+		"times": { "terminal":true },
+		"lparen": { "terminal":true },
+		"rparen": { "terminal":true }
+	},
+	"productions":{
+		"E":[
+			[ "E", "plus", "T" ],
+			[ "T" ]
+		],
+		"T":[
+			[ "T", "times", "F" ],
+			[ "F" ]
+		],
+		"F":[
+			[ "lparen", "E", "rparen" ],
+			[ "id" ]
+		]
+	},
+	"startSymbols": [ "E" ]
+}

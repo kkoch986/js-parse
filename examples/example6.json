@@ -1,0 +1,30 @@
+{
+	"symbols":{
+		"(": { "terminal":true },
+		")": { "terminal":true },
+		"&": { "terminal":true },
+		"a": { "terminal":true },
+		"b": { "terminal":true },
+		"c": { "terminal":true }
+	},
+	"productions":{
+		"S": [
+			["(", "A", ")"],
+			[]
+		],
+		"A":[
+			["T", "E"]
+		],
+		"E":[
+			["&", "T", "E"],
+			[]
+		],
+		"T":[
+			["(", "A", ")"],
+			["a"],
+			["b"],
+			["c"]
+		]
+	},
+	"startSymbols": [ "S" ]
+}
