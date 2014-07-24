@@ -27,14 +27,14 @@ var tok = TokenizerModule.Tokenizer.Create(init_filters, token_chain);
  * Create a Parser.
  **/
 var ParserModule = require("./lib").Parser.LRParser;
-var parser = ParserModule.factory(require("./examples/example2.json"), function(AST){
+var parser = ParserModule.factory(require("./examples/example1.json"), function(AST){
 	console.log(AST);
 });
 
 /**
  * Begin Tokenizing/Parsing
  **/
-tok.start("n b e q e");
+tok.start("a a a b c d e e e e e");
 
 console.log("Input: ", tok.getStream());
 var t = null;
