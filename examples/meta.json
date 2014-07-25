@@ -1,0 +1,28 @@
+
+{
+	"description":"Used to parse future grammars",
+	"symbols":{
+		"atom": { "terminal":true },
+		"->": { "terminal":true, "exclude":true },
+		".": { "terminal":true, "exclude":true },
+		"|": { "terminal":true, "exclude":true }
+	},
+	"productions":{
+		"Grammar":[
+			["GrammarLine", "Grammar"],
+			["GrammarLine"]
+		],
+		"GrammarLine":[
+			["atom", "->", "SymbolList", "."]
+		],
+		"SymbolList":[
+			["AtomList", "|", "SymbolList"],
+			["AtomList"]
+		],
+		"AtomList":[
+			[ "atom", "AtomList" ],
+			[ "atom" ]
+		]
+	},
+	"startSymbols": [ "Grammar" ]
+}
