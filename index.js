@@ -1,44 +1,34 @@
 
+var jsp = require("./lib");
+var Lexer = jsp.Lexer;
+var Parser = jsp.Parser.LRParser;
+var pd = require("./examples/meta.json");
 
-/**
- * Create a tokenizer.
- **/
-var TokenizerModule = require("./lib").Tokenizer;
-var Tokens = TokenizerModule.Token;
-
-// Create a new tokenizers with the given token configuration
-var init_filters = [
-	TokenizerModule.Filters.removeInlineComments("%")
-];
-
-var Tok_String = Tokens.StringTokenPrototype;
-var Tok_Variable = Tokens.prolog.PrologVariableTokenPrototype;
-var Tok_Atom = Tokens.AtomTokenPrototype;
-var Tok_Number = Tokens.NumberTokenPrototype;
-var Tok_Symbol = Tokens.prolog.PrologSymbolTokenPrototype;
-var Tok_Word = Tokens.WordTokenPrototype;
-
-var token_chain = [
-	Tok_Word.create()
-];
-var tok = TokenizerModule.Tokenizer.Create(init_filters, token_chain);
-
-/**
- * Create a Parser.
- **/
-var ParserModule = require("./lib").Parser.LRParser;
-var parser = ParserModule.factory(require("./examples/example2.json"), function(AST){
-	console.log(AST);
+// Create the parser
+var parser = Parser.Create(pd);
+parser.on("GrammarLine", function(GrammarLine, AST){
+	console.log("GrammarLine", GrammarLine);
 });
 
-/**
- * Begin Tokenizing/Parsing
- **/
-tok.start("n b e q e");
+parser.on("accept", function(token_stack){
+	console.log("Parser Accept:", token_stack);
+});
 
-console.log("Input: ", tok.getStream());
-var t = null;
-while(t = tok.next()) {
-	parser.shift(t);
+// Create the lexer
+var lexer = Lexer.Create(pd.symbols);
+lexer.on("token", function(token){
+	// Pass tokens to the parser immediately.
+	console.log("Token recognized: ", token);
+	parser.shift(token);
+});
+
+lexer.on("end", function(){
+	parser.end();
+});
+
+// Begin processing the input
+var input = "a -> b C d | e.";
+for(var i in input) {
+	lexer.append(input[i]);
 }
-parser.end();
+lexer.end();

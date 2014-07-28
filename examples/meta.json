@@ -1,11 +1,31 @@
-
 {
 	"description":"Used to parse future grammars",
 	"symbols":{
-		"atom": { "terminal":true },
-		"->": { "terminal":true, "exclude":true },
-		".": { "terminal":true, "exclude":true },
-		"|": { "terminal":true, "exclude":true }
+		"atom": { 
+			"terminal":true,
+			"match":"[a-zA-Z_]([a-zA-Z0-9_\\-]*)?"
+		},
+		"->": { 
+			"terminal":true, 
+			"excludeFromProduction":true,
+			"match":"->"
+		},
+		".": { 
+			"terminal":true, 
+			"excludeFromProduction":true,
+			"match":"\\."
+		},
+		"|": { 
+			"terminal":true, 
+			"excludeFromProduction":true,
+			"match":"\\|"
+		},
+		"WS": { 
+			"includeInStream":false,
+			"terminal":true,
+			"excludeFromProduction":true,
+			"match":"[ \t\n]+"
+		}
 	},
 	"productions":{
 		"Grammar":[
