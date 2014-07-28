@@ -1,82 +1,97 @@
-
-
-/**
- * Create a tokenizer.
- **/
-var TokenizerModule = require("./lib").Tokenizer;
-var Tokens = TokenizerModule.Token;
-
-// Create a new tokenizers with the given token configuration
-var init_filters = [
-	
-];
-
-var Tok_Atom = Tokens.AtomTokenPrototype;
-var Tok_Symbol = Tokens.prolog.PrologSymbolTokenPrototype;
-
-var token_chain = [
-	Tok_Atom.create(),
-	Tok_Symbol.create()
-];
-var tok = TokenizerModule.Tokenizer.Create(init_filters, token_chain);
-
-/**
- * Create a Parser.
- **/
-var ParserModule = require("./lib").Parser.LRParser;
-
+var jsp = require("./lib");
+var Lexer = jsp.Lexer;
+var Parser = jsp.Parser.LRParser;
+var pd = require("./examples/meta.json");
 var parserDescription = {
 	"symbols":{},
 	"productions":{},
 	"startSymbols":[]
 };
+var closed = false;
 
-var parser = ParserModule.factory(require("./examples/meta.json"), function(AST){
-	var grammar = AST.pop();
+// Create the parser
+var parser = Parser.Create(pd);
 
-	// Loop over the grammar lines
-	var lines = grammar.value;
-	for(var l in lines) {
-		var line = lines[l].value;
+// Create the lexer
+var lexer = Lexer.Create(pd.symbols);
+lexer.on("token", function(token){
+	// Pass tokens to the parser immediately.
+	console.log("Token recognized: ", token);
+	parser.shift(token);
+});
 
-		// Extract the Head symbol
-		var head = line[0].value;
-		console.log("[META] Processing rules for: " + head);
+lexer.on("end", function(){
+	parser.end();
+});
 
-		// check if its the first symbol
-		if(parserDescription.startSymbols.length === 0) {
-			console.log("[META] Using " + head + " as start symbol.");
-			parserDescription.startSymbols.push(head);
-		}
+// Begin processing the input
+console.log("Begin entering the Grammar (\\q to finish):");
+var readline = require('readline');
+var rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
-		// Ensure that a productions array exists for this head.
-		if(!parserDescription.productions[head]) {
-			parserDescription.productions[head] = [];
-		}
+function handleInput(line) {
+	if(line.trim() === "\\q") { 
+		closed = true;
+		rl.close();
+		lexer.end();
+		return ;
+	}
 
-		// Ensure the HEAD is in the symbols list as a non-terminal
-		if(!parserDescription.symbols[head]) {
-			parserDescription.symbols[head] = {};
-		}
-		parserDescription.symbols[head].terminal = false;
+	for(var l in line) {
+		lexer.append(line[l]);
+	}
 
-		// Now extract the symbol lists.
-		var rules = SymbolListToAtomList(line[1]);
-		for(var r in rules) {
-			var rule = [];
+	rl.question("> ", handleInput);
+}
 
-			var atoms = AtomListToAtoms(rules[r]);
-			for(var a in atoms) {
-				var atom = atoms[a].value;
-				rule.push(atom);
+rl.question("> ", handleInput);
 
-				if(!parserDescription.symbols[atom]) {
-					parserDescription.symbols[atom] = { "terminal": true };
-				}
+parser.on("GrammarLine", function(GrammarLine, AST){
+	var head = GrammarLine[0].value;
+	console.log("[META] Processing rules for: " + head);
+
+	// check if its the first symbol
+	if(parserDescription.startSymbols.length === 0) {
+		console.log("[META] Using " + head + " as start symbol.");
+		parserDescription.startSymbols.push(head);
+	}
+
+	// Ensure that a productions array exists for this head.
+	if(!parserDescription.productions[head]) {
+		parserDescription.productions[head] = [];
+	}
+
+	// Ensure the HEAD is in the symbols list as a non-terminal
+	if(!parserDescription.symbols[head]) {
+		parserDescription.symbols[head] = {};
+	}
+	parserDescription.symbols[head].terminal = false;
+
+	// Now extract the symbol lists.
+	var rules = SymbolListToAtomList(GrammarLine[1]);
+	for(var r in rules) {
+		var rule = [];
+
+		var atoms = AtomListToAtoms(rules[r]);
+		for(var a in atoms) {
+			var atom = atoms[a].value;
+			rule.push(atom);
+
+			if(!parserDescription.symbols[atom]) {
+				parserDescription.symbols[atom] = { "terminal": true, "match":atom };
 			}
-
-			parserDescription.productions[head].push(rule);
 		}
+
+		parserDescription.productions[head].push(rule);
+	}
+});
+
+parser.on("accept", function(AST){
+	if(closed) {
+		console.log("Grammar definition:\n", JSON.stringify(parserDescription));
 	}
 });
 
@@ -84,12 +99,12 @@ var parser = ParserModule.factory(require("./examples/meta.json"), function(AST)
  * Take a symbol list token and recursively unfold it into an array of AtomLists.
  **/
 function SymbolListToAtomList(symbolList) {
-	if(symbolList.value.length === 0) {
+	if(symbolList.body.length === 0) {
 		return [];
-	} else if(symbolList.value.length === 1) {
-		return [symbolList.value[0]];
+	} else if(symbolList.body.length === 1) {
+		return [symbolList.body[0]];
 	} else {
-		return [ symbolList.value[0] ].concat(SymbolListToAtomList(symbolList.value[1]));
+		return [ symbolList.body[0] ].concat(SymbolListToAtomList(symbolList.body[1]));
 	}
 }
 
@@ -97,55 +112,11 @@ function SymbolListToAtomList(symbolList) {
  * Take an atom list and recursively unfold it into an array of Atoms.
  **/
 function AtomListToAtoms(atomList) {
-	if(atomList.value.length === 0) {
+	if(atomList.body.length === 0) {
 		return [];
-	} else if(atomList.value.length === 1) {
-		return [atomList.value[0]];
+	} else if(atomList.body.length === 1) {
+		return [atomList.body[0]];
 	} else {
-		return [ atomList.value[0] ].concat(AtomListToAtoms(atomList.value[1]));
+		return [ atomList.body[0] ].concat(AtomListToAtoms(atomList.body[1]));
 	}
 }
-
-/**
- * Begin Tokenizing/Parsing
- **/
-tok.start("");
-
-console.log("Begin entering the Gramamar (\\q to finish):");
-var readline = require('readline');
-var rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
-
-function handleInput(line) {
-	if(line.trim() === "\\q") { 
-		rl.close();
-
-		console.log("Grammar definition:\n", JSON.stringify(parserDescription));
-		return ;
-	}
-
-	tok.append(line);
-
-    var ended = false;
-	var t = null;
-    while(t = tok.next()) {
-		if(t.getType() === ".") {
-			parser.shift(t);
-			parser.end();
-			ended = true;
-		} else { 
-			parser.shift(t);
-		}
-	}
-
-	if(ended === false) {
-		rl.question(">>> ", handleInput);
-	} else {
-		rl.question("> ", handleInput);
-	}
-}
-
-rl.question("> ", handleInput);
