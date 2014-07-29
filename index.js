@@ -14,6 +14,10 @@ parser.on("accept", function(token_stack){
 	console.log("Parser Accept:", token_stack);
 });
 
+parser.on("error", function(error){
+	console.log("Parse Error: ", error.message);
+});
+
 // Create the lexer
 var lexer = Lexer.Create(pd.symbols);
 lexer.on("token", function(token){
@@ -27,7 +31,7 @@ lexer.on("end", function(){
 });
 
 // Begin processing the input
-var input = "a -> b C d | e.";
+var input = "a -> b C d | e";
 for(var i in input) {
 	lexer.append(input[i]);
 }
