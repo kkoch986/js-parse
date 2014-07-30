@@ -81,7 +81,8 @@ parser.on("GrammarLine", function(GrammarLine, AST){
 			rule.push(atom);
 
 			if(!parserDescription.symbols[atom]) {
-				parserDescription.symbols[atom] = { "terminal": true, "match":atom };
+				var match = atom.replace(/([\*\+\.\(\)\[\]])/ig, "\\$1");
+				parserDescription.symbols[atom] = { "terminal": true, "match":match };
 			}
 		}
 

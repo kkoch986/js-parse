@@ -16,6 +16,7 @@ parser.on("accept", function(token_stack){
 
 parser.on("error", function(error){
 	console.log("Parse Error: ", error.message);
+	throw error.message;
 });
 
 // Create the lexer
@@ -31,7 +32,7 @@ lexer.on("end", function(){
 });
 
 // Begin processing the input
-var input = "a -> b C d | e";
+var input = "a -> b -> C d | e.";
 for(var i in input) {
 	lexer.append(input[i]);
 }

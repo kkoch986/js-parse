@@ -3,7 +3,7 @@
 	"symbols":{
 		"atom": { 
 			"terminal":true,
-			"match":"[a-zA-Z_]([a-zA-Z0-9_\\-]*)?"
+			"match":"[a-zA-Z_\\+\\*\\(\\)]([^ \t\n\\.]*)?"
 		},
 		"->": { 
 			"terminal":true, 
