@@ -25,7 +25,14 @@ var Lexer = jsp.Lexer;
 var Parser = jsp.Parser.LRParser;
 var pd = require("./examples/meta.json");
 var parserDescription = {
-	"symbols":{},
+	"symbols":{
+		"WS": { 
+			"includeInStream":false,
+			"terminal":true,
+			"excludeFromProduction":true,
+			"match":"[ \t\n]+"
+		}
+	},
 	"productions":{},
 	"startSymbols":[]
 };
@@ -72,7 +79,7 @@ function handleInput(line) {
 rl.question("> ", handleInput);
 
 parser.on("GrammarLine", function(GrammarLine, AST){
-	var head = GrammarLine[0].value;
+	var head = GrammarLine[0].body[0].value;
 	console.log("[META] Processing rules for: " + head);
 
 	// check if its the first symbol
@@ -138,8 +145,8 @@ function AtomListToAtoms(atomList) {
 	if(atomList.body.length === 0) {
 		return [];
 	} else if(atomList.body.length === 1) {
-		return [atomList.body[0]];
+		return [atomList.body[0].body[0]];
 	} else {
-		return [ atomList.body[0] ].concat(AtomListToAtoms(atomList.body[1]));
+		return [ atomList.body[0].body[0] ].concat(AtomListToAtoms(atomList.body[1]));
 	}
 }

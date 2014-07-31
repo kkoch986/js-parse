@@ -20,10 +20,11 @@
 	THE SOFTWARE.
 */
 
-var Parser = require("../lib/parser").LRParser;
-var START_SYMBOL = Parser.LRParserPrototype.START_SYMBOL;
-var EPSILON = Parser.LRParserPrototype.EPSILON;
-var EOF = Parser.LRParserPrototype.EOF;
+var constants       = require("../lib/parser/utils/constants");
+var first_set       = require("../lib/parser/utils/first_set");
+var START_SYMBOL    = constants.augmentation_symbol;
+var EPSILON         = constants.epsilon;
+var EOF             = constants.EOF_symbol;
 
 describe("Parser - First Sets - ", function(){
 
@@ -60,7 +61,7 @@ describe("Parser - First Sets - ", function(){
 			"startSymbols": [ "S" ]
 		};
 
-		var firstSets = Parser.factory(parserDescription).getParserDescription().firstSets;
+		var firstSets = first_set.computeFirstSetForGrammar(parserDescription);
 
 		// First check the terminals
 		firstSets["a"].should.eql(["a"]);
@@ -70,7 +71,6 @@ describe("Parser - First Sets - ", function(){
 		firstSets["e"].should.eql(["e"]);
 
 		// Now the non-terminals
-		firstSets[START_SYMBOL].sort().should.eql(["a", "b", "c", "d"]);
 		firstSets["S"].sort().should.eql(["a", "b", "c", "d"]);
 		firstSets["B"].sort().should.eql(["b", "c", "d"]);
 		firstSets["C"].sort().should.eql(["c", "d"]);
@@ -123,10 +123,12 @@ describe("Parser - First Sets - ", function(){
 					["R", "S", "q"]
 				]
 			},
-			"startSymbols": [ "P" ]
+			"startSymbols": [ START_SYMBOL ]
 		};
+		parserDescription.symbols[START_SYMBOL] = {"terminal":false};
+		parserDescription.productions[START_SYMBOL] = [ ["P"] ];
 
-		var firstSets = Parser.factory(parserDescription).getParserDescription().firstSets;
+		var firstSets = first_set.computeFirstSetForGrammar(parserDescription);
 
 		// First check the terminals
 		firstSets["i"].should.eql(["i"]);
@@ -185,7 +187,7 @@ describe("Parser - First Sets - ", function(){
 			"startSymbols": [ "S" ]
 		};
 
-		var firstSets = Parser.factory(parserDescription).getParserDescription().firstSets;
+		var firstSets = first_set.computeFirstSetForGrammar(parserDescription);
 
 		// First check the terminals
 		firstSets["a"].should.eql(["a"]);
@@ -193,7 +195,6 @@ describe("Parser - First Sets - ", function(){
 		firstSets["r"].should.eql(["r"]);
 
 		// Now the non-terminals
-		firstSets[START_SYMBOL].sort().should.eql(["a"]);
 		firstSets["S"].sort().should.eql(["a"]);
 		firstSets["R"].sort().should.eql([EPSILON, "r"]);
 		firstSets["T"].sort().should.eql([EPSILON, "a", "r"]);
@@ -236,7 +237,7 @@ describe("Parser - First Sets - ", function(){
 			"startSymbols": [ "S" ]
 		};
 
-		var firstSets = Parser.factory(parserDescription).getParserDescription().firstSets;
+		var firstSets = first_set.computeFirstSetForGrammar(parserDescription);
 
 		// First check the terminals
 		firstSets["a"].should.eql(["a"]);
@@ -248,7 +249,6 @@ describe("Parser - First Sets - ", function(){
 		firstSets["g"].should.eql(["g"]);
 
 		// Now the non-terminals
-		firstSets[START_SYMBOL].sort().should.eql([EPSILON, "a", "b", "c", "d"]);
 		firstSets["S"].sort().should.eql([EPSILON, "a", "b", "c", "d"]);
 		firstSets["B"].sort().should.eql([EPSILON, "b", "c", "d"]);
 		firstSets["C"].sort().should.eql([EPSILON, "c", "d"]);
@@ -302,7 +302,7 @@ describe("Parser - First Sets - ", function(){
 			"startSymbols": [ "S" ]
 		};
 
-		var firstSets = Parser.factory(parserDescription).getParserDescription().firstSets;
+		var firstSets = first_set.computeFirstSetForGrammar(parserDescription);
 
 		// First check the terminals
 		firstSets["a"].should.eql(["a"]);
@@ -313,7 +313,6 @@ describe("Parser - First Sets - ", function(){
 		firstSets["f"].should.eql(["f"]);
 
 		// Now the non-terminals
-		firstSets[START_SYMBOL].sort().should.eql([EPSILON, "a", "b", "c", "e", "f"]);
 		firstSets["S"].sort().should.eql([EPSILON, "a", "b", "c", "e", "f"]);
 		firstSets["A"].sort().should.eql([EPSILON, "a"]);
 		firstSets["B"].sort().should.eql([EPSILON, "b", "c"]);
@@ -361,7 +360,7 @@ describe("Parser - First Sets - ", function(){
 			"startSymbols": [ "S" ]
 		};
 
-		var firstSets = Parser.factory(parserDescription).getParserDescription().firstSets;
+		var firstSets = first_set.computeFirstSetForGrammar(parserDescription);
 
 		// First check the terminals
 		firstSets["a"].should.eql(["a"]);
@@ -372,7 +371,6 @@ describe("Parser - First Sets - ", function(){
 		firstSets["&"].should.eql(["&"]);
 
 		// Now the non-terminals
-		firstSets[START_SYMBOL].sort().should.eql(["(", EPSILON]);
 		firstSets["S"].sort().should.eql(["(", EPSILON]);
 		firstSets["A"].sort().should.eql(["(", "a", "b", "c"]);
 		firstSets["E"].sort().should.eql(["&", EPSILON]);
@@ -421,7 +419,7 @@ describe("Parser - First Sets - ", function(){
 			"startSymbols": [ "E" ]
 		};
 
-		var firstSets = Parser.factory(parserDescription).getParserDescription().firstSets;
+		var firstSets = first_set.computeFirstSetForGrammar(parserDescription);
 
 		// First check the terminals
 		firstSets["("].should.eql(["("]);
@@ -431,7 +429,6 @@ describe("Parser - First Sets - ", function(){
 		firstSets["id"].should.eql(["id"]);
 
 		// Now the non-terminals
-		firstSets[START_SYMBOL].sort().should.eql(["(", "id"]);
 		firstSets["F"].sort().should.eql(["(", "id"]);
 		firstSets["T"].sort().should.eql(["(", "id"]);
 		firstSets["E"].sort().should.eql(["(", "id"]);

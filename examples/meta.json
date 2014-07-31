@@ -1,9 +1,17 @@
 {
 	"description":"Used to parse future grammars",
 	"symbols":{
-		"atom": { 
+		"atom_lit": { 
 			"terminal":true,
 			"match":"[a-zA-Z_\\+\\*\\(\\)]([^ \t\n\\.]*)?"
+		},
+		"atom_quote": {
+			"terminal":true,
+			"match":"[\\\"](.*)[\\\"]"
+		},
+		"atom_single_quote": {
+			"terminal":true,
+			"match":"[\\'](.*)[\\']"
 		},
 		"->": { 
 			"terminal":true, 
@@ -42,6 +50,12 @@
 		"AtomList":[
 			[ "atom", "AtomList" ],
 			[ "atom" ]
+		],
+		"atom":[
+			["atom_quote"],
+			["atom_lit"],
+			["atom_single_quote"]
+
 		]
 	},
 	"startSymbols": [ "Grammar" ]

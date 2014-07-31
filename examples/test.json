@@ -1,0 +1,1 @@
+{"symbols":{"WS":{"includeInStream":false,"terminal":true,"excludeFromProduction":true,"match":"[ \t\n]+"},"a":{"terminal":false},"b":{"terminal":true,"match":"b"},"\"C\"":{"terminal":true,"match":"\"C\""},"d":{"terminal":true,"match":"d"}},"productions":{"a":[["b","\"C\"","d"]]},"startSymbols":["a"]}
