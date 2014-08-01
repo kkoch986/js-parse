@@ -1,0 +1,143 @@
+{
+    "productions": {
+        "ANY": [
+            [ "." ]
+        ],
+        "BASIC_RE": [
+            [ "STAR" ],
+            [ "PLUS" ],
+            [ "ELEM_RE" ]
+        ],
+        "CHAR": [
+            [ "NONMETACHAR" ],
+            [ "SLASH", "METACHAR" ]
+        ],
+        "CONCAT": [
+            [ "SIMPLE_RE", "BASIC_RE" ]
+        ],
+        "ELEM_RE": [
+            [ "GROUP" ],
+            [ "ANY" ],
+            [ "EOS" ],
+            [ "CHAR" ],
+            [ "SET" ]
+        ],
+        "EOS": [
+            [ "$" ]
+        ],
+        "GROUP": [
+            [ "(", "RE", ")" ]
+        ],
+        "NEG_SET": [
+            [ "[", "^", "SET_ITEMS", "]" ]
+        ],
+        "PLUS": [
+            [ "ELEM_RE", "+" ]
+        ],
+        "POS_SET": [
+            [ "[", "SET_ITEMS", "]" ]
+        ],
+        "RANGE": [
+            [ "CHAR", "-", "CHAR" ]
+        ],
+        "RE": [
+            [ "UNION" ],
+            [ "SIMPLE_RE" ]
+        ],
+        "SET": [
+            [ "POS_SET" ],
+            [ "NEG_SET" ]
+        ],
+        "SET_ITEM": [
+            [ "RANGE" ],
+            [ "CHAR" ]
+        ],
+        "SET_ITEMS": [
+            [ "SET_ITEM", "SET_ITEMS" ],
+            [ "SET_ITEM" ]
+        ],
+        "SIMPLE_RE": [
+            [ "CONCAT" ],
+            [ "BASIC_RE" ]
+        ],
+        "STAR": [
+            [ "ELEM_RE", "*" ]
+        ],
+        "UNION": [
+            [ "RE", "|", "SIMPLE_RE" ]
+        ],
+        "METACHAR": [
+            ["^"], 
+            ["."], 
+            ["|"], 
+            ["["], 
+            ["]"], 
+            ["("], 
+            [")"], 
+            ["*"], 
+            ["+"], 
+            ["-"]
+        ]
+    },
+    "startSymbols": [ "RE" ],
+    "symbols": {
+        "$": {
+            "match": "\\$",
+            "terminal": true
+        },
+        "(": {
+            "match": "\\(",
+            "terminal": true
+        },
+        ")": {
+            "match": "\\)",
+            "terminal": true
+        },
+        "*": {
+            "match": "\\*",
+            "terminal": true
+        },
+        "+": {
+            "match": "\\+",
+            "terminal": true
+        },
+        "-": {
+            "match": "-",
+            "terminal": true
+        },
+        ".": {
+            "match": "\\.",
+            "terminal": true
+        },
+        "[": {
+            "match": "\\[",
+            "terminal": true
+        },
+        "]": {
+            "match": "\\]",
+            "terminal": true
+        },
+        "^": {
+            "match": "\\^",
+            "terminal": true
+        },
+        "|": {
+            "match": "\\|",
+            "terminal": true
+        },
+        "SLASH": {
+            "match": "\\\\",
+            "terminal": true
+        },
+        "WS": {
+            "excludeFromProduction": true,
+            "includeInStream": false,
+            "match": "[ \t\n]+",
+            "terminal": true
+        },
+        "NONMETACHAR": {
+            "match": "[^\\$\\^\\\\\\/\\[\\]\\(\\)]",
+            "terminal": true
+        }
+    }
+}

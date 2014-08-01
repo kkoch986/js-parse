@@ -3,15 +3,17 @@
 	"symbols":{
 		"atom_lit": { 
 			"terminal":true,
-			"match":"[a-zA-Z_\\+\\*\\(\\)]([^ \t\n\\.]*)?"
+			"match":"[a-zA-Z_\\+\\*\\(\\)](?:[^ \t\n\\.]*)?"
 		},
 		"atom_quote": {
 			"terminal":true,
-			"match":"[\\\"](.*)[\\\"]"
+			"match":"\"((?:[^\"\\\\]|\\\\.)*)\"",
+			"matchOnly":1
 		},
 		"atom_single_quote": {
 			"terminal":true,
-			"match":"[\\'](.*)[\\']"
+			"match":"[\\'](.*)[\\']",
+			"matchOnly":1
 		},
 		"->": { 
 			"terminal":true, 

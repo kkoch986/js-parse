@@ -27,7 +27,7 @@
 	BASIC_RE -> STAR | PLUS | ELEM_RE.
 	STAR -> ELEM_RE "*".
 	PLUS -> ELEM_RE "+".
-	ELEM_RE -> GROUP | AND | EOS | CHAR | SET.
+	ELEM_RE -> GROUP | ANY | EOS | CHAR | SET.
 	GROUP -> ( RE ).
 	ANY -> ".".
 	EOS -> "$".
@@ -35,21 +35,25 @@
 	SET -> POS_SET | NEG_SET.
 	POS_SET -> "[" SET_ITEMS "]".
 	NEG_SET -> "[" "^" SET_ITEMS "]".
-	SET_ITEMS -> SET_ITEM | SET_ITEM SET_ITEMS.
+	SET_ITEMS -> SET_ITEM SET_ITEMS | SET_ITEM.
 	SET_ITEM -> RANGE | CHAR.
 	RANGE -> CHAR "-" CHAR.
 **/
 
-var jsp = require("./lib");
+var jsp = require("../../lib");
 var Lexer = jsp.Lexer;
 var Parser = jsp.Parser.LRParser;
-var pd = require("./examples/test.json");
+var pd = require("./re.json");
 
 // Create the parser
 var parser = Parser.Create(pd);
 
 parser.on("accept", function(token_stack){
-	console.log("Parser Accept:", token_stack);
+	console.log("Parser Accept:", JSON.stringify(token_stack));
+});
+
+parser.on("production", function(head, body){
+	console.log("[PARSE]", head, body);
 });
 
 parser.on("error", function(error){
@@ -70,7 +74,8 @@ lexer.on("end", function(){
 });
 
 // Begin processing the input
-var input = "b \"C\" d";
+// var input = "[a-zA-Z0-9]";
+var input = "(.*)$";
 for(var i in input) {
 	lexer.append(input[i]);
 }
