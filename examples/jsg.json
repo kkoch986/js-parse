@@ -1,0 +1,31 @@
+{
+	"symbols":{
+		"KW_LEX":{
+			"terminal":true,
+			"matches":"[lL][eE][xX]:"
+		},
+		"KW_AS":{
+			"terminal":true,
+			"matches":"[aA][sS]:"
+		}
+	},
+	"productions":{
+		"Program":[
+			["LEX", "GRAMMAR"],
+			["GRAMMAR"]
+		],
+		"LEX":[
+			["KW_LEX", "LEX_LINES"],
+			["KW_LEX"]
+		],
+		"LEX_LINES":[
+			["LEX_LINE", "LEX_LINES"],
+			["LEX_LINE"]
+		],
+		"LEX_LINE":[
+			["Atom", "KW_AS", "RE", "DECLS", "."],
+			["Atom", "KW_AS", "RE", "."]
+		]
+	},
+	"startSymbols": [ "Program" ]
+}
