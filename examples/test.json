@@ -1,1 +1,23 @@
-{"symbols":{"WS":{"includeInStream":false,"terminal":true,"excludeFromProduction":true,"match":"[ \t\n]+"},"a":{"terminal":false},"b":{"terminal":true,"match":"b"},"\"C\"":{"terminal":true,"match":"\"C\""},"d":{"terminal":true,"match":"d"}},"productions":{"a":[["b","\"C\"","d"]]},"startSymbols":["a"]}
+{
+    "productions": {
+        "a": [
+            [
+            	"REX.RE"
+            ]
+        ]
+    },
+    "startSymbols": [
+        "a"
+    ],
+    "modules":{
+    	"REX":"examples/re/re.json"
+    },
+    "symbols": {
+        "WS": {
+            "excludeFromProduction": true,
+            "includeInStream": false,
+            "match": "[ \t\n]+",
+            "terminal": true
+        }
+    }
+}

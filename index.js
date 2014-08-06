@@ -49,7 +49,7 @@ var pd = require("./examples/test.json");
 var parser = Parser.Create(pd);
 
 parser.on("accept", function(token_stack){
-	console.log("Parser Accept:", token_stack);
+	console.log("Parser Accept:", require('util').inspect(token_stack, true, 1000));
 });
 
 parser.on("error", function(error){
@@ -61,7 +61,7 @@ parser.on("error", function(error){
 var lexer = Lexer.Create(pd.symbols);
 lexer.on("token", function(token){
 	// Pass tokens to the parser immediately.
-	console.log("Token recognized: ", token);
+	// console.log("Token recognized: ", token);
 	parser.shift(token);
 });
 
@@ -70,7 +70,7 @@ lexer.on("end", function(){
 });
 
 // Begin processing the input
-var input = "b \"C\" d";
+var input = "[a-zA-Z0-9]+([W]*)[0-9]+";
 for(var i in input) {
 	lexer.append(input[i]);
 }

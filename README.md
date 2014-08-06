@@ -102,6 +102,8 @@ Grammar definition:
 1. ~~Conflict detection (shift/reduce, reduce/reduce)~~
 1. ~~Overhaul lexer set up.~~
 1. ~~Error reporting (nice errors instead of just blowing up)~~
+1. ~~Import grammars into other grammars as modules.~~
+1. Recursive import depth.
 1. Easier to use grammar specification format.
 1. Fix tests broken by parser conflicts.
 1. MORE TESTS!!!
