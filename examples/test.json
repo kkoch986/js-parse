@@ -1,26 +1,20 @@
 {
     "productions": {
-        "a": [
+        "TEST": [
             [
-            	"REX"
+            	"REW"
             ]
         ]
     },
     "startSymbols": [
-        "a"
+        "TEST"
     ],
     "modules":{
-    	"REX":"examples/re/re.json"
+    	"REW":"examples/re_wrapper.json"
     },
-    "symbols": {
-        "WS": {
-            "excludeFromProduction": true,
-            "includeInStream": false,
-            "match": "[ \t\n]+",
-            "terminal": true
-        },
-         "REX.-": {
-            "excludeFromProduction": true
+    "symbols": { 
+        "REW.REX.-": {
+            "excludeFromProduction": false
         }
     }
 }

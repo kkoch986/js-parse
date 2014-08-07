@@ -1,0 +1,26 @@
+{
+    "productions": {
+        "REWSS": [
+            [
+            	"REX"
+            ]
+        ]
+    },
+    "startSymbols": [
+        "REWSS"
+    ],
+    "modules":{
+    	"REX":"examples/re/re.json"
+    },
+    "symbols": {
+        "WS": {
+            "excludeFromProduction": true,
+            "includeInStream": false,
+            "match": "[ \t\n]+",
+            "terminal": true
+        },
+        "REX.-": {
+            "excludeFromProduction": true
+        }
+    }
+}
