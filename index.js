@@ -61,7 +61,6 @@ parser.on("error", function(error){
 var lexer = Lexer.Create(parser.getParserDescription().symbols);
 lexer.on("token", function(token){
 	// Pass tokens to the parser immediately.
-	// console.log("Token recognized: ", token);
 	parser.shift(token);
 });
 

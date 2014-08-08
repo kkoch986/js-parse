@@ -106,7 +106,7 @@ Grammar definition:
 1. ~~Recursive import depth.~~
 1. Check for cyclic dependencies in module import
 1. Easier to use grammar specification format.
+1. Cleanup/reorganize code to make something maintainable.
 1. Fix tests broken by parser conflicts.
 1. MORE TESTS!!!
-1. Cleanup/reorganize code to make something maintainable.
 1. Documentation (eventually....)
