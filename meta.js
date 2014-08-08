@@ -147,7 +147,6 @@ function AtomListToAtoms(atomList) {
 	} else if(atomList.body.length === 1) {
 		return [atomList.body[0].body[0]];
 	} else {
-		console.log("AA", atomList.body);
 		return [ atomList.body[0].body[0] ].concat(AtomListToAtoms(atomList.body[1]));
 	}
 }
