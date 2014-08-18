@@ -39,14 +39,11 @@
 	SET_ITEM -> RANGE | CHAR.
 	RANGE -> CHAR "-" CHAR.
 **/
-
-var jsp = require("./lib");
-var Lexer = jsp.Lexer;
-var Parser = jsp.Parser.LRParser;
+var Parser = require("./lib").Parser.LRParser;
 var pd = require("./examples/test.json");
 
 // Create the parser
-var parser = Parser.Create(pd);
+var parser = Parser.CreateWithLexer(pd);
 
 parser.on("accept", function(token_stack){
 	console.log("Parser Accept:", require('util').inspect(token_stack, true, 1000));
@@ -57,24 +54,9 @@ parser.on("error", function(error){
 	throw error.message;
 });
 
-// Create the lexer
-var lexer = Lexer.Create(parser.getParserDescription().symbols);
-lexer.on("token", function(token){
-	// Pass tokens to the parser immediately.
-	parser.shift(token);
-});
-
-lexer.on("end", function(){
-	parser.end();
-});
-
 // Begin processing the input
 var input = "[a-zA-Z0-9]+([W]*)[0-9]+";
 for(var i in input) {
-	lexer.append(input[i]);
+	parser.append(input[i]);
 }
-lexer.end();
-
-
-
-
+parser.end();
