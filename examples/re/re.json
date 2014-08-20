@@ -67,20 +67,24 @@
             [ "RE", "|", "SIMPLE_RE" ]
         ],
         "METACHAR": [
-            ["^"], 
-            ["."], 
-            ["|"], 
-            ["["], 
-            ["]"], 
-            ["("], 
-            [")"], 
-            ["*"], 
-            ["+"], 
+            ["^"],
+            ["."],
+            ["|"],
+            ["["],
+            ["]"],
+            ["("],
+            [")"],
+            ["*"],
+            ["+"],
             ["-"]
         ]
     },
     "startSymbols": [ "RE" ],
     "symbols": {
+        "SET_ITEMS":{
+          "terminal":false,
+          "merge_recursive":true
+        },
         "$": {
             "match": "\\$",
             "terminal": true
