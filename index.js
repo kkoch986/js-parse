@@ -40,7 +40,7 @@
 	RANGE -> CHAR "-" CHAR.
 **/
 var Parser = require("./lib").Parser.LRParser;
-var pd = require("./examples/re/re.json");
+var pd = require("./examples/test.json");
 
 // Create the parser
 var parser = Parser.CreateWithLexer(pd);

@@ -82,8 +82,7 @@
     "startSymbols": [ "RE" ],
     "symbols": {
         "SET":{
-          "terminal":false,
-          "excludeFromProduction":true
+          "terminal":false
         },
         "SET_ITEMS":{
           "terminal":false,
