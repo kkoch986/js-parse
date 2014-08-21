@@ -82,7 +82,8 @@
     "startSymbols": [ "RE" ],
     "symbols": {
         "SET":{
-          "terminal":false
+          "terminal":false,
+          "mergeIntoParent":true
         },
         "SET_ITEMS":{
           "terminal":false,

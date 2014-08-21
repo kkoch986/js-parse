@@ -190,6 +190,35 @@ As described in the terminal symbol section above, the `excludeFromProduction` o
 available for non-terminal symbols. It will cause the parser, upon realizing this symbol
 to process it and continue without adding it to the current production it is trying to build.
 
+##### mergeIntoParent
+
+`mergeIntoParent` goes hand-in-hand with `mergeRecursive` below.
+Setting this option to true for a non-terminal, will cause this productions children
+to be set as arguments to the productions parent. It will cause the current symbol
+to be excluded.
+
+Consider the grammar:
+
+```
+SET_PARENT -> SET.
+SET -> POS_SET | NEG_SET.
+```
+
+This will produce a parse tree structure like:
+
+```
+SET_PARENT ( SET ( POS_SET( ... ) ) )
+```
+
+There is really no need in the parse tree to include the `SET` element, so we can
+merge its children into the `SET_PARENT`'s arguments.
+
+After setting `mergeIntoParent` on `SET`, the parse tree will look like this instead:
+
+```
+SET_PARENT ( POS_SET ( ... ) )
+```
+
 ##### mergeRecursive
 
 `mergeRecursive` is a pretty powerful tool when building a useful parse tree.

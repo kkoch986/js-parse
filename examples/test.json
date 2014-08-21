@@ -12,9 +12,13 @@
     "modules":{
     	"REW":"examples/re_wrapper.json"
     },
-    "symbols": { 
+    "symbols": {
         "REW.REX.-": {
             "excludeFromProduction": false
+        },
+        "REW.REWSS":{
+          "terminal":false,
+          "mergeIntoParent":true
         }
     }
 }
