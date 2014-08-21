@@ -176,6 +176,47 @@ In this case, `matchOnly` will remove the opening and closing quotes from the st
 the section of the token given by `(/^<regex>/).exec(string)[matchOnly];` In the case above,
 it will return the part of the string in the first set of captured parenthesis (the string without the quotes).
 
+`matchCaseInsensitive` - This will add the `/i` flag to the regex, causeing it to match regardless
+of case.
+
+`lookAhead` - `lookAhead` is useful when you need to look ahead in the stream to determine which
+token to use. Consider the following tokens:
+
+```
+"KW_endforeach":{
+	"terminal":true,
+	"match":"(endforeach)",
+	"matchCaseInsensitive":true
+},
+"KW_endfor":{
+	"terminal":true,
+	"match":"(endfor)",
+	"matchCaseInsensitive":true
+},
+```
+
+Its clear that the lexer will always match `endfor` and never match `endforeach` so we
+need a way to differentiate the two. We can add the following `lookAhead` option to make
+sure that we see the next symbol before matching this token.
+
+```
+"KW_endforeach":{
+	"terminal":true,
+	"match":"(endforeach)",
+	"matchCaseInsensitive":true
+},
+"KW_endfor":{
+	"terminal":true,
+	"match":"(endfor)",
+	"lookAhead":"[^e]",
+	"matchCaseInsensitive":true
+},
+```
+
+This means, the token will not be considered a match unless we see a match for `match` followed
+by a match for `lookAhead`. This will allow the lexer to find the `endforeach` token
+when appropriate.
+
 
 #### Non-terminals
 
