@@ -23,11 +23,55 @@ them before reaching the end of the input stream.
 Things are pretty alpha right now but i'll try to keep this readme up to date and improving as time goes on.
 Feel free to open issues or contribute!
 
-## Basic example
+## How it works
+
+### Creating a parser
+Currently, everything is based around a JSON object called a parser description.
+The parser description contains all of the info about the grammar and its symbols.
+
+Parser descriptions can also be used to build sub-modules which can be included
+to keep description files concise and reusable.
+
+More info on the format and details for a parser description are included below.
+
+### Parsing
+Once you have built your parser description, load it into node.js and use it to create
+a parser (`Parser.Create` or more commonly, `Parser.CreateWithLexer`). The parser
+emit 2 standard events: `accept` and `error` as well as an event for each non-terminal symbol
+provided by the parser description or its included modules.
+
+The `error` event is pretty self-explanatory. If there is a syntax error
+or tokenization error (only if tokenizer is attached using `CreateWithLexer`).
+
+The `accept` event is fired when the parser has been notified that the stream is over
+and it has built a complete parse tree. This will be called with the entire parse tree
+as an argument and is useful for getting a look at the whole parse tree.
+
+The `accept` callback is not the only way to interact with the parser, one of the coolest
+features about js-parse is its bottom-up nature. Since js-parse builds parse trees from the smallest
+elements up to the biggest you can actually begin to process the code before parsing the entire
+file.
+
+For example, consider the grammar:
+```
+A -> b c D.
+D -> e f g.
+```
+
+It is possible to bind handlers to the parse such as
+```javascript
+parser.on("D", function(D){ console.log("parsed D"); });
+parser.on("A", function(A){ console.log("parsed A"); });
+```
+
+These callbacks will be fired as soon as the parser constructs the D or A element,
+no need to wait until the entire stream is processed.
+
+## Basic parsing example
 
 ```javascript
 var Parser = require("./lib").Parser.LRParser;
-var pd = require("./examples/test.json");
+var pd = require("./examples/parser_description.json");
 
 // Create the parser
 var parser = Parser.CreateWithLexer(pd);
@@ -49,6 +93,243 @@ for(var i in input) {
 parser.end();
 
 ```
+
+## Writing Parser Descriptions
+
+Writing a parser description is as simple as creating a basic JSON object.
+It all starts with the basic template:
+
+```json
+{
+		"symbols": { },
+		"productions": { },
+		"modules":{ },
+		"startSymbols": [ ]
+}
+```
+
+Let's take a closer look at each section.
+
+### Symbols
+
+The symbols section is where you define all of the terminal symbols in the grammar.
+All terminal symbols must be provided in this section along with a regular expression
+to be used by the lexer to create tokens from the input stream.
+
+Non-terminal symbols are optional in this section and only need to be included if
+you are setting custom options for them.
+
+#### Terminals
+
+Terminal symbols must be defined in the parser description along with a regular expression
+used by the lexer to extract the symbol as a token from the input stream.
+
+Lets take a look at a sample terminal symbol definition:
+
+```json
+"WS": {
+	"terminal":true,
+	"match":"[ \t\n]+"
+}
+```
+
+This is a common token i use when writing parsers, whitespace. Typically, my parsers
+are written to extract the whitespace between tokens and discard it. This symbol is
+defined so that it will match the longest symbol matching `^[ \t\n]+$` will be
+recognized as a whitespace token and passed along to the parser as such.
+
+The `terminal` option is required in all symbols. The `match` option is required when
+`terminal` is `true`.
+
+Lets say we didn't care about whitespace and didn't want to bog down our grammer with WS
+tokens everywhere. We can include some options to make sure it isn't included:
+
+```json
+"WS": {
+	"terminal":true,
+	"match":"[ \t\n]+",
+	"excludeFromProduction":true,
+	"includeInStream":false
+}
+```
+
+Notice the two new options, `excludeFromProduction` and `includeInStream`.
+
+`includeInStream` - Setting this option to `false` will cause the lexer to recognize
+and discard this token rather than passing it along to the parser.
+
+`excludeFromProduction` - Setting this option to `true` will cause the parser to discard
+this symbol when it recognizes it in a parse tree structure. In the context above, this
+option would be redundant since the parser would never find out about the WS token anyway.
+
+##### Other options
+
+`matchOnly` - `matchOnly` is useful for tokens like strings in quotes, consider the symbol definition:
+```json
+"atom_quote": {
+	"terminal":true,
+	"match":"\"((?:[^\"\\\\]|\\\\.)*)\"",
+	"matchOnly":1
+},
+```
+In this case, `matchOnly` will remove the opening and closing quotes from the stream but only include
+the section of the token given by `(/^<regex>/).exec(string)[matchOnly];` In the case above,
+it will return the part of the string in the first set of captured parenthesis (the string without the quotes).
+
+
+#### Non-terminals
+
+Non-terminal symbols are not required in the symbol definitions since they are easily
+extracted from the `productions` object described below.
+
+Non-terminal symbols can be included if you want to set some custom options on them.
+
+##### excludeFromProduction
+
+As described in the terminal symbol section above, the `excludeFromProduction` option is also
+available for non-terminal symbols. It will cause the parser, upon realizing this symbol
+to process it and continue without adding it to the current production it is trying to build.
+
+##### mergeRecursive
+
+`mergeRecursive` is a pretty powerful tool when building a useful parse tree.
+
+Consider a construct like an argument list. Typically you might define one as such:
+
+```
+ArgList -> Arg | Arg ArgList
+```
+
+This works great, the only problem is when parsing something like this:
+
+```
+a(a,b,c,d).
+```
+
+The `ArgList` parse tree will look something like this:
+
+```
+ArgList(
+		Arg(a),
+		ArgList(
+				Arg(b),
+				ArgList(
+					Arg(c),
+					ArgList(
+							Arg(d)
+					)
+				)
+		)
+)
+```
+
+By providing `mergeRecursive` on the `ArgList` symbol, the parser will detect this
+kind of recursive structure being built and will merge them into a single array.
+Producing something much more tolerable:
+
+```
+ArgList( Arg(a), Arg(b), Arg(c), Arg(d) )
+```
+
+### Productions
+
+Defining the productions is the most crucial part of the parser description.
+It's where all the action happens.
+
+This section most closely resembles the BNF-style grammars you're probably used to.
+It is composed of keys which represent non-terminal symbols and their value is an array
+of string arrays representing the productions which compose the symbol.
+
+For example consider the grammar:
+```
+A -> b c D
+A -> f
+D -> e f g
+```
+
+The `productions` object for this would look like this:
+
+```json
+"productions":{
+	"A":[
+		["b", "c", "D"],
+		["f"]
+	],
+	"D":[
+		["e", "f", "g"]
+	]
+}
+```
+
+Thats about all there is to it in this section.
+
+### StartSymbols
+
+The `startSymbols` array is also quite simple, it defines the top-most entities
+in your grammar and will be used to define when to accept the input as a complete structure.
+
+The `startSymbols` array should be a simple array of strings representing the symbols
+which serve as starting points for the grammar. In the example above, if we wanted to
+start on A only, we would provide `startSymbols` as:
+
+```json
+"startSymbols":["A"]
+```
+
+### Modules
+
+One of the most exciting features of js-parse is its module system.
+Its a very simple system to use and it allows self-contained, reusable
+grammar modules to be created. The `modules` object is completely optional.
+
+The `modules` object contains key/value pairs where the key
+is a name to apply to the module and the value is the path to the JSON object which defines it.
+
+Consider the following files:
+
+_a.json_:
+```json
+{
+	"symbols":{
+		"a":{"terminal":true, "match":"a"},
+		"b":{"terminal":true, "match":"b"}
+	},
+	"productions":{
+		"S":[ "a", "b", "a" ]
+	},
+	"startSymbols":["S"]
+}
+```
+
+_b.json_:
+```json
+{
+	"symbols":{
+		"c":{"terminal":true, "match":"c"},
+		"d":{"terminal":true, "match":"d"}
+	},
+	"productions":{
+		"S":[
+			["MOD_A.S", "c", "d", "c"]
+		]
+	},
+	"modules":{
+		"MOD_A":"./a.json"
+	},
+	"startSymbols":["S"]
+}
+```
+
+As you can see, the _a.json_ parser description can be used in the _b.json_ grammar.
+All of the symbols in _a.json_ are prefixed with the key given in _b.json_.
+
+The symbols in `A` can also be modified when imported into `B` simply by using the dot syntax.
+For instance, in _b.json_ we could add the following to the `symbols` object:
+```json
+"MOD_A.b":{"terminal":true, "match":"Z"}
+```
+
+Now the `b` symbol in the `A` grammar will be matched only by `Z` (when imported into `B` this way).
 
 ## CLI for creating grammar specifications
 
@@ -84,16 +365,15 @@ Grammar definition:
 {"symbols":{"WS":{"includeInStream":false,"terminal":true,"excludeFromProduction":true,"match":"[ \t\n]+"},"a":{"terminal":false},"S":{"terminal":true,"match":"S"},"e":{"terminal":true,"match":"e"},"B":{"terminal":false,"match":"B"},"b":{"terminal":true,"match":"b"},"C":{"terminal":false,"match":"C"},"c":{"terminal":true,"match":"c"},"d":{"terminal":true,"match":"d"}},"productions":{"a":[["a","S","e"],["B"]],"B":[["b","B","e"],["C"]],"C":[["c","C","e"],["d"]]},"startSymbols":["a"]}
 ```
 
-## TODO:
+It doesn't support any of the more advanced features available in the parser description
+object, but its useful for getting started with the basic structure you'll need.
 
-1. ~~Conflict detection (shift/reduce, reduce/reduce)~~
-1. ~~Overhaul lexer set up.~~
-1. ~~Error reporting (nice errors instead of just blowing up)~~
-1. ~~Import grammars into other grammars as modules.~~
-1. ~~Recursive import depth.~~
-1. ~~Check for cyclic dependencies in module import~~
-1. ~~Potentially merge lexer/parser api to allow less code for basic parsing.~~
-1. Improve/Create Documentation
+## Last remarks
+This documentation was but together pretty hastily, so please feel free to open issues, leave comments
+or submit pull requests. js-parse is in pretty early stages and theres a lot of room
+to grow!
+
+## TODO:
 1. Cleanup/reorganize code to make something more maintainable.
 1. Fix tests broken by parser conflicts.
 1. MORE TESTS!!!

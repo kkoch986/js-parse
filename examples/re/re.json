@@ -83,7 +83,7 @@
     "symbols": {
         "SET_ITEMS":{
           "terminal":false,
-          "merge_recursive":true
+          "mergeRecursive":true
         },
         "$": {
             "match": "\\$",

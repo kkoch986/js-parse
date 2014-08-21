@@ -2,11 +2,11 @@
 	"symbols":{
 		"KW_LEX":{
 			"terminal":true,
-			"matches":"[lL][eE][xX]:"
+			"match":"[lL][eE][xX]:"
 		},
 		"KW_AS":{
 			"terminal":true,
-			"matches":"[aA][sS]:"
+			"match":"[aA][sS]:"
 		}
 	},
 	"productions":{
