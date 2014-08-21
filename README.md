@@ -373,6 +373,8 @@ This documentation was but together pretty hastily, so please feel free to open 
 or submit pull requests. js-parse is in pretty early stages and theres a lot of room
 to grow!
 
+Also note, some of the examples have fallen a little out of date. I will try to update them ASAP.
+
 ## TODO:
 1. Cleanup/reorganize code to make something more maintainable.
 1. Fix tests broken by parser conflicts.
