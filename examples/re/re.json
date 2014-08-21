@@ -81,6 +81,10 @@
     },
     "startSymbols": [ "RE" ],
     "symbols": {
+        "SET":{
+          "terminal":false,
+          "excludeFromProduction":true
+        },
         "SET_ITEMS":{
           "terminal":false,
           "mergeRecursive":true
