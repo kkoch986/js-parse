@@ -56,7 +56,5 @@ parser.on("error", function(error){
 
 // Begin processing the input
 var input = "[a-zA-Z0-9]+([W]*)[0-9]+";
-for(var i in input) {
-	parser.append(input[i]);
-}
+parser.append(input);
 parser.end();
