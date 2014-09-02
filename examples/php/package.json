@@ -1,0 +1,17 @@
+{
+  "name": "js-parse-php-example",
+  "version": "0.0.0",
+  "description": "A PHP parser written using js-parse",
+  "main": "index.js",
+  "scripts": {
+    "test":"./node_modules/.bin/mocha spec --reporter list --require should"
+  },
+  "repository": "",
+  "author": "Ken Koch <kkoch986@gmail.com>",
+  "license": "MIT",
+  "dependencies":{},
+  "devDependencies":{
+    "mocha":"*",
+    "should":"*"
+  }
+}
