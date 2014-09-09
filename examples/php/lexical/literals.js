@@ -85,7 +85,7 @@
     ".":{
       "terminal":true,
       "match":"[\\.]",
-      "lookAhead":"[^0-9]"
+      "lookAhead":"[^0-9=]"
     },
     "->":{
       "terminal":true,
@@ -101,22 +101,23 @@
     },
     "**":{
       "terminal":true,
-      "match":"\\*\\*"
+      "match":"\\*\\*",
+      "lookAhead":"[^=]"
     },
     "*":{
       "terminal":true,
       "match":"\\*",
-      "lookAhead":"[^\\*]"
+      "lookAhead":"[^\\*=]"
     },
     "+":{
       "terminal":true,
       "match":"\\+",
-      "lookAhead":"[^\\+]"
+      "lookAhead":"[^\\+=]"
     },
     "-":{
       "terminal":true,
       "match":"\\-",
-      "lookAhead":"[^\\-]"
+      "lookAhead":"[^\\-=]"
     },
     "~":{
       "terminal":true,
@@ -124,24 +125,169 @@
     },
     "!":{
       "terminal":true,
-      "match":"!"
+      "match":"!",
+      "lookAhead":"[^=]"
     },
-    //  % >      =   ==   ===   !=   !==   ^   |
-    // &   &&   ||   ?   :   ; =   **=   *=   /=   %=   +=   -=   .=   >=   &=   ^=   |=   ,
     "$":{
       "terminal":true,
       "match":"[\\$]"
     },
     "/":{
       "terminal":true,
-      "match":"[/]"
+      "match":"[/]",
+      "lookAhead":"[^=]"
+    },
+    "%":{
+      "terminal":true,
+      "match":"[\\%]"
+    },
+    "<<":{
+      "terminal":true,
+      "match":"<<",
+      "lookAhead":"[^<=]"
+    },
+    ">>":{
+      "terminal":true,
+      "match":">>"
+    },
+    "<":{
+      "terminal":true,
+      "match":"[<]",
+      "lookAhead":"[^<]"
+    },
+    ">":{
+      "terminal":true,
+      "match":"[>]",
+      "lookAhead":"[^>]"
+    },
+    "<=":{
+      "terminal":true,
+      "match":"<="
+    },
+    ">=":{
+      "terminal":true,
+      "match":">="
+    },
+    "==":{
+      "terminal":true,
+      "match":"==",
+      "lookAhead":"[^=]"
+    },
+    "===":{
+      "terminal":true,
+      "match":"===",
+      "lookAhead":"[^===]"
+    },
+    "!=":{
+      "terminal":true,
+      "match":"!=",
+      "lookAhead":"[^=]"
+    },
+    "!==":{
+      "terminal":true,
+      "match":"!=="
+    },
+    "^":{
+      "terminal":true,
+      "match":"[\\^]",
+      "lookAhead":"[^=]"
+    },
+    "|":{
+      "terminal":true,
+      "match":"[\\|]",
+      "lookAhead":"[^\\|=]"
+    },
+    "&":{
+      "terminal":true,
+      "match":"[&]",
+      "lookAhead":"[^&=]"
+    },
+    "&&":{
+      "terminal":true,
+      "match":"&&"
+    },
+    "||":{
+      "terminal":true,
+      "match":"\\|\\|"
+    },
+    "?":{
+      "terminal":true,
+      "match":"[\\?]"
+    },
+    ":":{
+      "terminal":true,
+      "match":"[:]"
+    },
+    ";":{
+      "terminal":true,
+      "match":"[;]"
+    },
+    "=":{
+      "terminal":true,
+      "match":"[=]",
+      "lookAhead":"[^=]"
+    },
+    "&":{
+      "terminal":true,
+      "match":"[&]",
+      "lookAhead":"[&]"
+    },
+    "**=":{
+      "terminal":true,
+      "match":"\\*\\*="
+    },
+    "*=":{
+      "terminal":true,
+      "match":"\\*="
+    },
+    "/=":{
+      "terminal":true,
+      "match":"/="
+    },
+    "%=":{
+      "terminal":true,
+      "match":"\\%="
+    },
+    "+=":{
+      "terminal":true,
+      "match":"\\+="
+    },
+    "-=":{
+      "terminal":true,
+      "match":"\\-="
+    },
+    ".=":{
+      "terminal":true,
+      "match":"\\.="
+    },
+    "<<=":{
+      "terminal":true,
+      "match":"<<="
+    },
+    ">>=":{
+      "terminal":true,
+      "match":">>="
+    },
+    "&=":{
+      "terminal":true,
+      "match":"&="
+    },
+    "^=":{
+      "terminal":true,
+      "match":"\\^="
+    },
+    "|=":{
+      "terminal":true,
+      "match":"\\|="
+    },
+    ",":{
+      "terminal":true,
+      "match":","
     },
     "\\":{
       "terminal":true,
-      "match":"[\\\\]",
-      "lookAhead":"[^\\\\]"
+      "match":"\\\\"
     },
-
 
     /**
      * Boolean Literal.
@@ -250,7 +396,19 @@
     "sign":[
       ["+"],
       ["-"]
-    ]
+    ],
+
+    /**
+     * Operator or punctuation.
+     **/
+    "operator-or-punctuator":[
+      [ "[" ], [ "]" ], [ "(" ], [ ")" ], [ "{" ], [ "." ], [ "->" ], [ "++" ], [ "--" ], [ "**" ], 
+      [ "*" ], [ "+" ], [ "-" ], [ "~" ], [ "!" ], [ "$" ], [ "/" ], [ "%" ], [ "<<" ], [ ">>" ], 
+      [ "<" ], [ ">" ], [ "<=" ], [ ">=" ], [ "==" ], [ "===" ], [ "!=" ], [ "!==" ], [ "^" ], 
+      [ "|" ], [ "&" ], [ "&&" ], [ "||" ], [ "?" ], [ ":" ], [ ";" ], [ "=" ], [ "&" ], [ "**=" ], 
+      [ "*=" ], [ "/=" ], [ "%=" ], [ "+=" ], [ "-=" ], [ ".=" ], [ "<<=" ], [ ">>=" ], [ "&=" ], 
+      [ "^=" ], [ "|=" ], [ "," ]
+    ]   
   },
   "startSymbols":[ "literal" ]
 }

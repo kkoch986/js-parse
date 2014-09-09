@@ -2,7 +2,7 @@
 // test with ../../node_modules/mocha/bin/mocha spec/
 
 var Parser = require("../../../lib").Parser.LRParser;
-var terminals_pd = require("../literals.js");
+var terminals_pd = require("../lexical/literals.js");
 
 describe("PHP Parser - Literals - ", function(){
 
@@ -44,10 +44,19 @@ describe("PHP Parser - Literals - ", function(){
     "0xbada55":"hexadecimal-literal"
   };
 
-  // These symbols should not parse as part of the grammar
+  // These symbols should not parse as part of the `literal` grammar
   var negative_cases = [ 
     ".", "0b0b01010", "09", "0b0123", "0x0x123", "0xaag", ".e10", "e10", "0.010.01", "123d", "\"\"\"",
     "'''"
+  ];
+
+  // Operators.
+  var operators = [
+    "[", "]", "(", ")", "{", ".", "->", "++", "--", "**", "*", "+", 
+    "-", "~", "!", "$", "/", "%", "<<", ">>", "<", ">", "<=", ">=", 
+    "==", "===", "!=", "!==", "^", "|", "&", "&&", "||", "?", ":", 
+    ";", "=", "&", "**=", "*=", "/=", "%=", "+=", "-=", ".=", "<<=", 
+    ">>=", "&=", "^=", "|=", ","
   ];
 
   /** 
@@ -82,6 +91,7 @@ describe("PHP Parser - Literals - ", function(){
       return function(end){
         var parser = Parser.CreateWithLexer(terminals_pd);
         parser.on("error", function(error){ throw error.message; });
+        // parser.getLexer().on("token", function(r){console.log(r); });
         parser.on("integer-literal", function(ast){ 
           var type = typeof ast[0].type === "undefined" ? ast[0].head : ast[0].type;
           type.should.eql(expected);
@@ -112,4 +122,34 @@ describe("PHP Parser - Literals - ", function(){
       }
     }(test,expected));
   }
+
+  /**
+   * Operators and Punctuation
+   **/
+  describe("PHP Parser - Literals - Operators and Punctuation", function(){
+    // Copy the parser description and change the start symbol
+    var pd = {};
+    for(var i in terminals_pd) {
+      pd[i] = terminals_pd[i];
+    }
+    pd.startSymbols = ["operator-or-punctuator"]
+    for(var k in operators) {
+      var operator = operators[k];
+      it("`" + operator + "`", function(operator){
+        return function(end) {
+          var parser = Parser.CreateWithLexer(pd);
+          parser.on("error", function(error){ throw error.message; });
+          // parser.getLexer().on("token", function(r){console.log(r); });
+          parser.on("operator-or-punctuator", function(ast){
+            ast[0].type.should.eql(operator);
+            end();
+          });
+          // Begin processing the input
+          parser.append(operator);
+          parser.end();
+        }
+      }(operator));
+    }
+  });
+
 });

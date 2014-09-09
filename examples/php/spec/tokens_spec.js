@@ -1,6 +1,8 @@
 
 var Parser = require("../../../lib").Parser.LRParser;
-var terminals_pd = require("../tokens.js");
+var terminals_pd = require("../lexical/tokens.js");
+require.main.paths.push(__dirname + "/../lexical");
+console.log(require.main.paths);
 
 describe("PHP Parser - Names - ", function(){
 
@@ -27,8 +29,8 @@ describe("PHP Parser - Names - ", function(){
 	};
 
 	/** 
-	* Positive name cases.
-	**/
+	 * Positive name cases.
+	 **/
 	for(var test in positive_literal_cases) {
 		var expected = positive_literal_cases[test];
 
@@ -50,8 +52,8 @@ describe("PHP Parser - Names - ", function(){
 	}
 
 	/**
-	* Negative cases.
-	**/
+	 * Negative cases.
+	 **/
 	for(var test in negative_cases) {
 		var expected = negative_cases[test];
 
@@ -70,4 +72,36 @@ describe("PHP Parser - Names - ", function(){
 		}(test,expected));
 	}
 
+	/**
+	 * Operators and Punctuation
+	 **/
+	// Operators.
+	var operators = [
+		"[", "]", "(", ")", "{", ".", "->", "++", "--", "**", "*", "+", 
+		"-", "~", "!", "$", "/", "%", "<<", ">>", "<", ">", "<=", ">=", 
+		"==", "===", "!=", "!==", "^", "|", "&", "&&", "||", "?", ":", 
+		";", "=", "&", "**=", "*=", "/=", "%=", "+=", "-=", ".=", "<<=", 
+		">>=", "&=", "^=", "|=", ","
+	];
+	describe("PHP Parser - Tokens - Operators and Punctuation", function(){
+		for(var k in operators) {
+			var operator = operators[k];
+			it("`" + operator + "`", function(operator){
+				return function(end) {
+					terminals_pd.startSymbols = ["token"];
+					var parser = Parser.CreateWithLexer(terminals_pd);
+					parser.on("error", function(error){ throw error.message; });
+					// parser.getLexer().on("token", function(r){console.log(r); });
+					parser.on("token", function(ast){
+						ast[0].head.should.eql('literals.operator-or-punctuator');
+						ast[0].body[0].type.should.eql("literals." + operator);
+						end();
+					});
+					// Begin processing the input
+					parser.append(operator);
+					parser.end();
+				}
+			}(operator));
+		}
+	});
 });

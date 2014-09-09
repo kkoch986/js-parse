@@ -2,7 +2,7 @@
 // test with ../../node_modules/mocha/bin/mocha spec/
 
 var Parser = require("../../../lib").Parser.LRParser;
-var keywords_pd = require("../keywords.json");
+var keywords_pd = require("../lexical/keywords.json");
 var keywords = [
 	"enddeclare","endforeach","endfor","endif","endswitch","endwhile",
 	"goto","if","implements",
@@ -18,10 +18,13 @@ describe("PHP Parser - Keywords - ", function(){
 	for(var k in keywords) {
 		var keyword = keywords[k];
 		it("`" + keyword + "`", function(keyword){
-			return function() {
+			return function(end) {
 				var parser = Parser.CreateWithLexer(keywords_pd);
 				parser.on("error", function(error){ throw error.message; });
-
+				parser.on("keyword", function(ast){ 
+					ast[0].type.should.eql(keyword);
+					end();
+				});
 				// Begin processing the input
 				parser.append(keyword);
 				parser.end();

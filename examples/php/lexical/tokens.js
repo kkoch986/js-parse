@@ -17,7 +17,7 @@ module.exports = {
       ["literals.name"],
       ["kw.keyword"],
       ["literals.literal"],
-      // ["operator-or-punctuator"]
+      ["literals.operator-or-punctuator"]
     ],
 
     /**
@@ -36,8 +36,8 @@ module.exports = {
     	["namespace-name", "literals.\\"],
     	["literals.\\", "namespace-name", "literals.\\"],
     	["literals.\\"],
-    	["kw.KW_namespace", "literals.\\", "namespace-name", "literals.\\"],
-    	["kw.KW_namespace", "literals.\\"]
+    	["kw.namespace", "literals.\\", "namespace-name", "literals.\\"],
+    	["kw.namespace", "literals.\\"]
     ],
     "qualified-name":[
     	["namespace-name-as-a-prefix", "literals.name"],

@@ -1,297 +1,297 @@
 {
 	"symbols":{
-		"KW_enddeclare":{
+		"enddeclare":{
 			"terminal":true,
 			"match":"(enddeclare)",
 			"matchCaseInsensitive":true
 		},
-		"KW_endforeach":{
+		"endforeach":{
 			"terminal":true,
 			"match":"(endforeach)",
 			"matchCaseInsensitive":true
 		},
-		"KW_endfor":{
+		"endfor":{
 			"terminal":true,
 			"match":"(endfor)",
 			"lookAhead":"[^e]",
 			"matchCaseInsensitive":true
 		},
-		"KW_endif":{
+		"endif":{
 			"terminal":true,
 			"match":"(endif)",
 			"matchCaseInsensitive":true
 		},
-		"KW_endswitch":{
+		"endswitch":{
 			"terminal":true,
 			"match":"(endswitch)",
 			"matchCaseInsensitive":true
 		},
-		"KW_endwhile":{
+		"endwhile":{
 			"terminal":true,
 			"match":"(endwhile)",
 			"matchCaseInsensitive":true
 		},
-		"KW_goto":{
+		"goto":{
 			"terminal":true,
 			"match":"(goto)",
 			"matchCaseInsensitive":true
 		},
-		"KW_if":{
+		"if":{
 			"terminal":true,
 			"match":"(if)",
 			"matchCaseInsensitive":true
 		},
-		"KW_implements":{
+		"implements":{
 			"terminal":true,
 			"match":"(implements)",
 			"matchCaseInsensitive":true
 		},
-		"KW_include":{
+		"include":{
 			"terminal":true,
 			"match":"(include)",
 			"lookAhead":"[^_]",
 			"matchCaseInsensitive":true
 		},
-		"KW_include_once":{
+		"include_once":{
 			"terminal":true,
 			"match":"(include_once)",
 			"matchCaseInsensitive":true
 		},
-		"KW_instanceof":{
+		"instanceof":{
 			"terminal":true,
 			"match":"(instanceof)",
 			"matchCaseInsensitive":true
 		},
-		"KW_extends":{
+		"extends":{
 			"terminal":true,
 			"match":"(extends)",
 			"matchCaseInsensitive":true
 		},
-		"KW_final":{
+		"final":{
 			"terminal":true,
 			"match":"(final)",
 			"lookAhead":"[^l]",
 			"matchCaseInsensitive":true
 		},
-		"KW_finally":{
+		"finally":{
 			"terminal":true,
 			"match":"(finally)",
 			"matchCaseInsensitive":true
 		},
-		"KW_for":{
+		"for":{
 			"terminal":true,
 			"match":"(for)",
 			"lookAhead":"[^e]",
 			"matchCaseInsensitive":true
 		},
-		"KW_foreach":{
+		"foreach":{
 			"terminal":true,
 			"match":"(foreach)",
 			"matchCaseInsensitive":true
 		},
-		"KW_function":{
+		"function":{
 			"terminal":true,
 			"match":"(function)",
 			"matchCaseInsensitive":true
 		},
-		"KW_global":{
+		"global":{
 			"terminal":true,
 			"match":"(global)",
 			"matchCaseInsensitive":true
 		},
-		"KW_insteadof":{
+		"insteadof":{
 			"terminal":true,
 			"match":"(insteadof)",
 			"matchCaseInsensitive":true
 		},
-		"KW_interface":{
+		"interface":{
 			"terminal":true,
 			"match":"(interface)",
 			"matchCaseInsensitive":true
 		},
-		"KW_namespace":{
+		"namespace":{
 			"terminal":true,
 			"match":"(namespace)",
 			"matchCaseInsensitive":true
 		},
-		"KW_new":{
+		"new":{
 			"terminal":true,
 			"match":"(new)",
 			"matchCaseInsensitive":true
 		},
-		"KW_or":{
+		"or":{
 			"terminal":true,
 			"match":"(or)",
 			"matchCaseInsensitive":true
 		},
-		"KW_print":{
+		"print":{
 			"terminal":true,
 			"match":"(print)",
 			"matchCaseInsensitive":true
 		},
-		"KW_private":{
+		"private":{
 			"terminal":true,
 			"match":"(private)",
 			"matchCaseInsensitive":true
 		},
-		"KW_throw":{
+		"throw":{
 			"terminal":true,
 			"match":"(throw)",
 			"matchCaseInsensitive":true
 		},
-		"KW_trait":{
+		"trait":{
 			"terminal":true,
 			"match":"(trait)",
 			"matchCaseInsensitive":true
 		},
-		"KW_try":{
+		"try":{
 			"terminal":true,
 			"match":"(try)",
 			"matchCaseInsensitive":true
 		},
-		"KW_use":{
+		"use":{
 			"terminal":true,
 			"match":"(use)",
 			"matchCaseInsensitive":true
 		},
-		"KW_var":{
+		"var":{
 			"terminal":true,
 			"match":"(var)",
 			"matchCaseInsensitive":true
 		},
-		"KW_while":{
+		"while":{
 			"terminal":true,
 			"match":"(while)",
 			"matchCaseInsensitive":true
 		},
-		"KW_xor":{
+		"xor":{
 			"terminal":true,
 			"match":"(xor)",
 			"matchCaseInsensitive":true
 		},
-		"KW_yield":{
+		"yield":{
 			"terminal":true,
 			"match":"(yield)",
 			"matchCaseInsensitive":true
 		},
-		"KW_abstract":{
+		"abstract":{
 			"terminal":true,
 			"match":"(abstract)",
 			"matchCaseInsensitive":true
 		},
-		"KW_and":{
+		"and":{
 			"terminal":true,
 			"match":"(and)",
 			"matchCaseInsensitive":true
 		},
-		"KW_as":{
+		"as":{
 			"terminal":true,
 			"match":"(as)",
 			"matchCaseInsensitive":true
 		},
-		"KW_break":{
+		"break":{
 			"terminal":true,
 			"match":"(break)",
 			"matchCaseInsensitive":true
 		},
-		"KW_callable":{
+		"callable":{
 			"terminal":true,
 			"match":"(callable)",
 			"matchCaseInsensitive":true
 		},
-		"KW_case":{
+		"case":{
 			"terminal":true,
 			"match":"(case)",
 			"matchCaseInsensitive":true
 		},
-		"KW_catch":{
+		"catch":{
 			"terminal":true,
 			"match":"(catch)",
 			"matchCaseInsensitive":true
 		},
-		"KW_class":{
+		"class":{
 			"terminal":true,
 			"match":"(class)",
 			"matchCaseInsensitive":true
 		},
-		"KW_clone":{
+		"clone":{
 			"terminal":true,
 			"match":"(clone)",
 			"matchCaseInsensitive":true
 		},
-		"KW_const":{
+		"const":{
 			"terminal":true,
 			"match":"(const)",
 			"matchCaseInsensitive":true
 		},
-		"KW_continue":{
+		"continue":{
 			"terminal":true,
 			"match":"(continue)",
 			"matchCaseInsensitive":true
 		},
-		"KW_declare":{
+		"declare":{
 			"terminal":true,
 			"match":"(declare)",
 			"matchCaseInsensitive":true
 		},
-		"KW_default":{
+		"default":{
 			"terminal":true,
 			"match":"(default)",
 			"matchCaseInsensitive":true
 		},
-		"KW_do":{
+		"do":{
 			"terminal":true,
 			"match":"(do)",
 			"matchCaseInsensitive":true
 		},
-		"KW_echo":{
+		"echo":{
 			"terminal":true,
 			"match":"(echo)",
 			"matchCaseInsensitive":true
 		},
-		"KW_else":{
+		"else":{
 			"terminal":true,
 			"match":"(else)",
 			"lookAhead":"[^i]",
 			"matchCaseInsensitive":true
 		},
-		"KW_elseif":{
+		"elseif":{
 			"terminal":true,
 			"match":"(elseif)",
 			"matchCaseInsensitive":true
 		},
-		"KW_protected":{
+		"protected":{
 			"terminal":true,
 			"match":"(protected)",
 			"matchCaseInsensitive":true
 		},
-		"KW_public":{
+		"public":{
 			"terminal":true,
 			"match":"(public)",
 			"matchCaseInsensitive":true
 		},
-		"KW_require":{
+		"require":{
 			"terminal":true,
 			"match":"(require)",
 			"lookAhead":"[^_]",
 			"matchCaseInsensitive":true
 		},
-		"KW_require_once":{
+		"require_once":{
 			"terminal":true,
 			"match":"(require_once)",
 			"matchCaseInsensitive":true
 		},
-		"KW_return":{
+		"return":{
 			"terminal":true,
 			"match":"(return)",
 			"matchCaseInsensitive":true
 		},
-		"KW_static":{
+		"static":{
 			"terminal":true,
 			"match":"(static)",
 			"matchCaseInsensitive":true
 		},
-		"KW_switch":{
+		"switch":{
 			"terminal":true,
 			"match":"(switch)",
 			"matchCaseInsensitive":true
@@ -299,64 +299,64 @@
 	},
 	"productions":{
 		"keyword":[
-			["KW_enddeclare"],
-			["KW_endforeach"],
-			["KW_endfor"],
-			["KW_endif"],
-			["KW_endswitch"],
-			["KW_endwhile"],
-			["KW_goto"],
-			["KW_if"],
-			["KW_implements"],
-			["KW_include"],
-			["KW_include_once"],
-			["KW_instanceof"],
-			["KW_extends"],
-			["KW_final"],
-			["KW_finally"],
-			["KW_for"],
-			["KW_foreach"],
-			["KW_function"],
-			["KW_global"],
-			["KW_insteadof"],
-			["KW_switch"],
-			["KW_static"],
-			["KW_return"],
-			["KW_require_once"],
-			["KW_require"],
-			["KW_public"],
-			["KW_protected"],
-			["KW_elseif"],
-			["KW_else"],
-			["KW_echo"],
-			["KW_do"],
-			["KW_default"],
-			["KW_declare"],
-			["KW_continue"],
-			["KW_const"],
-			["KW_clone"],
-			["KW_class"],
-			["KW_catch"],
-			["KW_case"],
-			["KW_callable"],
-			["KW_break"],
-			["KW_as"],
-			["KW_and"],
-			["KW_abstract"],
-			["KW_yield"],
-			["KW_xor"],
-			["KW_while"],
-			["KW_var"],
-			["KW_use"],
-			["KW_try"],
-			["KW_trait"],
-			["KW_throw"],
-			["KW_private"],
-			["KW_print"],
-			["KW_or"],
-			["KW_new"],
-			["KW_namespace"],
-			["KW_interface"]
+			["enddeclare"],
+			["endforeach"],
+			["endfor"],
+			["endif"],
+			["endswitch"],
+			["endwhile"],
+			["goto"],
+			["if"],
+			["implements"],
+			["include"],
+			["include_once"],
+			["instanceof"],
+			["extends"],
+			["final"],
+			["finally"],
+			["for"],
+			["foreach"],
+			["function"],
+			["global"],
+			["insteadof"],
+			["switch"],
+			["static"],
+			["return"],
+			["require_once"],
+			["require"],
+			["public"],
+			["protected"],
+			["elseif"],
+			["else"],
+			["echo"],
+			["do"],
+			["default"],
+			["declare"],
+			["continue"],
+			["const"],
+			["clone"],
+			["class"],
+			["catch"],
+			["case"],
+			["callable"],
+			["break"],
+			["as"],
+			["and"],
+			["abstract"],
+			["yield"],
+			["xor"],
+			["while"],
+			["var"],
+			["use"],
+			["try"],
+			["trait"],
+			["throw"],
+			["private"],
+			["print"],
+			["or"],
+			["new"],
+			["namespace"],
+			["interface"]
 		]
 	},
 	"startSymbols":["keyword"]
