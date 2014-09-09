@@ -1,6 +1,3 @@
-
-// test with ../../node_modules/mocha/bin/mocha spec/
-
 var Parser = require("../../../lib").Parser.LRParser;
 var keywords_pd = require("../lexical/keywords.json");
 var keywords = [

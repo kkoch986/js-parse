@@ -5,8 +5,8 @@ module.exports = {
   "symbols":{
   },
   "modules":{
-  	"kw":"./keywords.json",
-  	"literals":"./literals.js"
+  	"kw":"keywords.json",
+  	"literals":"literals.js"
   },
   "productions":{
     /**

@@ -1,4 +1,3 @@
-
 var Parser = require("../../../lib").Parser.LRParser;
 var terminals_pd = require("../lexical/tokens.js");
 require.main.paths.push(__dirname + "/../lexical");
@@ -37,7 +36,7 @@ describe("PHP Parser - Names - ", function(){
 		it(expected + " - " + test, function(test, expected){
 			return function(end){
 				terminals_pd.startSymbols = [expected];
-				var parser = Parser.CreateWithLexer(terminals_pd);
+				var parser = Parser.CreateWithLexer(terminals_pd, {"path":"./lexical"});
 				parser.on("error", function(error){ throw error.message; });
 				// parser.getLexer().on("token", function(r){console.log(r); });
 				parser.on("accept", function(ast){ 
@@ -61,7 +60,7 @@ describe("PHP Parser - Names - ", function(){
 			return function(end){
 				try {
 					terminals_pd.startSymbols = [expected];
-					var parser = Parser.CreateWithLexer(terminals_pd);
+					var parser = Parser.CreateWithLexer(terminals_pd, {"path":"./lexical"});
 					// parser.getLexer().on("token", function(r){console.log(r); });
 					parser.append(test);
 					parser.end();
@@ -89,7 +88,7 @@ describe("PHP Parser - Names - ", function(){
 			it("`" + operator + "`", function(operator){
 				return function(end) {
 					terminals_pd.startSymbols = ["token"];
-					var parser = Parser.CreateWithLexer(terminals_pd);
+					var parser = Parser.CreateWithLexer(terminals_pd, {"path":"./lexical"});
 					parser.on("error", function(error){ throw error.message; });
 					// parser.getLexer().on("token", function(r){console.log(r); });
 					parser.on("token", function(ast){

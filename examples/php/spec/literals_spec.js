@@ -1,6 +1,3 @@
-
-// test with ../../node_modules/mocha/bin/mocha spec/
-
 var Parser = require("../../../lib").Parser.LRParser;
 var terminals_pd = require("../lexical/literals.js");
 
