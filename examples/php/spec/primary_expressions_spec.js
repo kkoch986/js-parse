@@ -6,7 +6,7 @@ require.main.paths.push(__dirname + "/../syntax");
 describe("PHP Parser - Primary Expressions - ", function(){
 
 	var positive_literal_cases = {
-		"$test":"variable-name"
+		"$test":"tokens.variable-name"
 	};
 
 	// These symbols should not parse as part of the grammar
