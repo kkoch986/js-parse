@@ -4,7 +4,8 @@
   "description": "A PHP parser written using js-parse",
   "main": "index.js",
   "scripts": {
-    "test":"./node_modules/.bin/mocha spec --reporter list --require should"
+    "test":"./node_modules/.bin/mocha spec --reporter list --require should",
+    "start":"./node_modules/.bin/mocha spec/primary_expressions_spec.js --reporter list --require should"
   },
   "repository": "",
   "author": "Ken Koch <kkoch986@gmail.com>",

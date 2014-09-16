@@ -1,7 +1,6 @@
 var Parser = require("../../../lib").Parser.LRParser;
 var terminals_pd = require("../lexical/tokens.js");
-require.main.paths.push(__dirname + "/../lexical");
-console.log(require.main.paths);
+// require.main.paths.push(__dirname + "/../lexical");
 
 describe("PHP Parser - Names - ", function(){
 
