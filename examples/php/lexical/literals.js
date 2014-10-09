@@ -44,7 +44,7 @@
      **/
     "floating-literal-exp":{
       "terminal":true,
-      "match":"[0-9]+(\\.)?[0-9]*[e][\\-\\+]?[0-9]+",
+      "match":"[0-9]+(\\.)?[0-9]*[Ee][\\-\\+]?[0-9]+",
       "matchCaseInsensitive":true
     },
 

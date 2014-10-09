@@ -6,7 +6,24 @@ require.main.paths.push(__dirname + "/../syntax");
 describe("PHP Parser - Primary Expressions - ", function(){
 
 	var positive_literal_cases = {
-		"$test":"tokens.variable-name"
+		"$test":"tokens.variable-name",
+		"$test12345":"tokens.variable-name",
+		"$_test12345":"tokens.variable-name",
+		"$___test12345":"tokens.variable-name",
+		"___test12345":"tokens.qualified-name",
+		"\\___test12345":"tokens.qualified-name",
+		"\\a_namespace\\___test12345":"tokens.qualified-name",
+		"\\___test12345":"tokens.qualified-name",
+		"namespace\\___test12345":"tokens.qualified-name",
+		"123456":"literals.literal",
+		"TRUE":"literals.literal",
+		"false":"literals.literal",
+		"NULL":"literals.literal",
+		"1.35E10":"literals.literal",
+		"$this":"$this",
+		"($this)":"expression-in-parens",
+		"(1.35E123)":"expression-in-parens",
+		"($test)":"expression-in-parens",
 	};
 
 	// These symbols should not parse as part of the grammar
@@ -22,13 +39,16 @@ describe("PHP Parser - Primary Expressions - ", function(){
 
 		it(expected + " - " + test, function(test, expected){
 			return function(end){
-				terminals_pd.startSymbols = [expected];
 				var parser = Parser.CreateWithLexer(terminals_pd, {"path":"./syntax"});
 				parser.on("error", function(error){ throw error.message; });
-				// parser.getLexer().on("token", function(r){console.log(r); });
+				parser.getLexer().on("token", function(r){console.log(r); });
 				parser.on("accept", function(ast){ 
 					var type = typeof ast[0].type === "undefined" ? ast[0].head : ast[0].type;
+					type.should.eql("primary-expression");
+
+					var type = typeof ast[0].body[0].type === "undefined" ? ast[0].body[0].head : ast[0].body[0].type;
 					type.should.eql(expected);
+
 					end();
 				});
 				parser.append(test);
@@ -46,7 +66,6 @@ describe("PHP Parser - Primary Expressions - ", function(){
 		it("Negative Tests - `" + test + "`", function(test){
 			return function(end){
 				try {
-					terminals_pd.startSymbols = [expected];
 					var parser = Parser.CreateWithLexer(terminals_pd, {"path":"./lexical"});
 					// parser.getLexer().on("token", function(r){console.log(r); });
 					parser.append(test);

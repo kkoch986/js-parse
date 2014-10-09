@@ -6,11 +6,22 @@ module.exports = {
   },
   "modules":{
   	"kw":"../lexical/keywords.json",
-    "tokens":"../lexical/tokens.js"
+    "tokens":"../lexical/tokens.js",
+    "literals":"../lexical/literals.js"
   },
   "productions":{
+    "$this":[
+      ["literals.$", "kw.this"]
+    ],
+    "expression-in-parens":[
+      ["literals.(", "primary-expression", "literals.)"]
+    ],
     "primary-expression":[
-      ["tokens.variable-name"]
+      ["$this"],
+      ["tokens.variable-name"],
+      ["tokens.qualified-name"],
+      ["literals.literal"],
+      ["expression-in-parens"],
     ]
   },
   "startSymbols":[ "primary-expression" ]

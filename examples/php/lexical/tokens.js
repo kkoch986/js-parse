@@ -31,17 +31,14 @@ module.exports = {
     	["literals.name"]
     ],
 
-    // TODO: Potential bug here (S/R conflict)
-    "namespace-name-as-a-prefix":[
-    	["namespace-name", "literals.\\"],
-    	["literals.\\", "namespace-name", "literals.\\"],
-    	["literals.\\"],
-    	["kw.namespace", "literals.\\", "namespace-name", "literals.\\"],
-    	["kw.namespace", "literals.\\"]
-    ],
+    // Combined namespace-name-as-a-prefix with qualified name.
     "qualified-name":[
-    	["namespace-name-as-a-prefix", "literals.name"],
-    	["literals.name"]
+      ["literals.name"],
+      ["literals.\\", "literals.name"],
+      ["literals.\\", "namespace-name", "literals.\\", "literals.name"],
+      ["kw.namespace", "literals.\\", "literals.name"],
+      ["kw.namespace", "literals.\\", "namespace-name", "literals.\\", "literals.name"],
+      ["namespace-name", "literals.\\", "literals.name"]
     ]
   },
   "startSymbols":[ "token" ]

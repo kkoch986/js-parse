@@ -1,5 +1,10 @@
 {
 	"symbols":{
+		"this":{
+			"terminal":true,
+			"match":"(this)",
+			"matchCaseInsensitive":true
+		},
 		"enddeclare":{
 			"terminal":true,
 			"match":"(enddeclare)",
