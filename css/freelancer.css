@@ -6,6 +6,7 @@
 
 body {
     overflow-x: hidden;
+    padding-top:110px;
 }
 
 p {
@@ -86,7 +87,7 @@ header {
 }
 
 header .container {
-    padding-top: 100px;
+    padding-top: 50px;
     padding-bottom: 50px;
 }
 
@@ -110,7 +111,6 @@ header .intro-text .skills {
 
 @media(min-width:768px) {
     header .container {
-        padding-top: 200px;
         padding-bottom: 100px;
     }
 
@@ -171,7 +171,7 @@ header .intro-text .skills {
 }
 
 section {
-    padding: 100px 0;
+    padding: 50px 0;
 }
 
 section h2 {
@@ -200,10 +200,19 @@ section.success {
 }
 
 #portfolio .portfolio-item .portfolio-link {
+    color:#ffffff;
     display: block;
     position: relative;
     margin: 0 auto;
     max-width: 400px;
+}
+
+#portfolio .portfolio-item .portfolio-link h3 {
+    color:#2c3e50;
+}
+
+#portfolio .portfolio-item .portfolio-link:hover {
+    text-decoration: none;
 }
 
 #portfolio .portfolio-item .portfolio-link .caption {
