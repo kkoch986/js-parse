@@ -11,7 +11,7 @@ title: Basic Example
 C -> c C | [epsilon].</code></pre>
 
 			<br />
-		This should match strings of the form "bcccccccccd" with any number of "c"'s in a row (or none).
+		This should match strings of the form "bcccccccccd" with any number of "c"'s in a row (at least one).
 		<hr />
 		<!-- Creating a parser desctiption -->
 		<h3>Creating a parser description</h3>
@@ -29,7 +29,7 @@ C -> c C | [epsilon].</code></pre>
 		],
 		"C":[
 			[ "c", "C" ],
-			[  ]
+			[ "c" ]
 		]
 	},
 	"startSymbols": [ "S" ]
@@ -93,10 +93,9 @@ parser.end();</pre>
 		</code>
 
 		If all went according to plan you should see some output like this:
-		<pre>Parser Accept: [ { type: 'b', value: 'b' },
-  { head: 'S',
+		<pre>Parser Accept: [ { head: 'S',
     body: 
-     [ { type: 'c', value: 'c' },
+     [ { type: 'b', value: 'b' },
        { head: 'C',
          body: 
           [ { type: 'c', value: 'c' },
@@ -112,7 +111,7 @@ parser.end();</pre>
                            { head: 'C',
                              body: 
                               [ { type: 'c', value: 'c' },
-                                { head: 'C', body: [ [length]: 0 ] },
+                                { head: 'C', body: [ { type: 'c', value: 'c' }, [length]: 1 ] },
                                 [length]: 2 ] },
                            [length]: 2 ] },
                       [length]: 2 ] },
@@ -120,7 +119,7 @@ parser.end();</pre>
             [length]: 2 ] },
        { type: 'd', value: 'd' },
        [length]: 3 ] },
-  [length]: 2 ]</pre>
+  [length]: 1 ]</pre>
 
   		Its far from the most beautiful output we could ask for. If you look closely though, you can see the expected structure represented here. 
 
@@ -149,10 +148,9 @@ parser.end();</pre>
   		Now run the script with <code>bccccccd</code> again and you should see a slightly different output:
 
   		<code>
-  			<pre>Parser Accept: [ { type: 'b', value: 'b' },
-  { head: 'S',
+  			<pre>Parser Accept: [ { head: 'S',
     body: 
-     [ { type: 'c', value: 'c' },
+     [ { type: 'b', value: 'b' },
        { head: 'C',
          body: 
           [ { type: 'c', value: 'c' },
@@ -160,10 +158,11 @@ parser.end();</pre>
             { type: 'c', value: 'c' },
             { type: 'c', value: 'c' },
             { type: 'c', value: 'c' },
-            [length]: 5 ] },
+            { type: 'c', value: 'c' },
+            [length]: 6 ] },
        { type: 'd', value: 'd' },
        [length]: 3 ] },
-  [length]: 2 ]</pre>
+  [length]: 1 ]</pre>
   		</code>
 
   		As you can see, all of those nested C productions have been merged into one instance of a C production and the value being and array of all the values that existed under a chain of nested C type productions.
@@ -181,8 +180,39 @@ parser.end();</pre>
   		If we changed the <code>C</code> line in our <strong>symbols</strong> object to <code>"C": { "terminal":false, "mergeIntoParent":true }</code> and ran our script again, we see different output:
 
   		<code>
-  			<pre>[ { type: 'b', value: 'b' },
-  { head: 'S',
+  			<pre>[ { head: 'S',
+    body: 
+     [ { type: 'b', value: 'b' },
+       { type: 'c', value: 'c' },
+       { type: 'c', value: 'c' },
+       { type: 'c', value: 'c' },
+       { type: 'c', value: 'c' },
+       { type: 'c', value: 'c' },
+       { type: 'c', value: 'c' },
+       { type: 'd', value: 'd' },
+       [length]: 8 ] },
+  [length]: 1 ]</pre>
+  		</code>
+
+  		This happens because each time a "c" is encountered it is added to the "S" production rather than creating a new "C" and adding it to that.
+
+      <!-- Using excludeFromParent -->
+      <h3>Advanced Tip: Using <code>excludeFromParent</code> to clean up the output a little more.</h3>
+      <p>
+        In our grammar, the "b" and "d" are not really too important, we can assume if the grammar is accepted that it began with a "b" and ended with a "d", so we can use <code>excludeFromParent</code>
+        on the "b" and "d" symbols to remove them from the final output.
+      </p>
+
+      To do so, change the "b" and "d" lines in the parser description to read: 
+      <code>
+        <pre>"b": { "terminal":true, "match":"b", "excludeFromProduction":true },
+"d": { "terminal":true, "match":"d", "excludeFromProduction":true },
+</pre>
+      </code>
+
+      Now when running the script through we see the following (assuming we kept <code>mergeIntoParent</code> from the previous step):
+      <br />
+      <code><pre>Parser Accept: [ { head: 'S',
     body: 
      [ { type: 'c', value: 'c' },
        { type: 'c', value: 'c' },
@@ -190,12 +220,8 @@ parser.end();</pre>
        { type: 'c', value: 'c' },
        { type: 'c', value: 'c' },
        { type: 'c', value: 'c' },
-       { type: 'd', value: 'd' },
-       [length]: 7 ] },
-  [length]: 2 ]
-</pre>
-  		</code>
-
-  		This happens because each time a "c" is encountered it is added to the "S" production rather than creating a new "C" and adding it to that.
+       [length]: 6 ] },
+  [length]: 1 ]</pre>
+      </code>
 	</div>
 </section>
