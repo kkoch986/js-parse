@@ -8,19 +8,15 @@ title: Examples
 		<h1>Examples</h1>
 		<p>Cool parsers that I've made.</p>
 		<hr />
-		<div class="list-group">
-			<a href="{{ site.baseurl }}/examples/basic.html" class="list-group-item active">
-				<h4 class="list-group-item-heading">Hello World</h4>
-				<p class="list-group-item-text">A basic into to creating parsers by starting from the basics</p>
-			</a>
-		</div>
-		<div class="list-group">
-			<a href="{{ site.baseurl }}/examples/matching.html" class="list-group-item active">
-				<h4 class="list-group-item-heading">Parentheses Matching</h4>
-				<p class="list-group-item-text">A slightly more advanced grammar which can be used to identify strings of form <code>a(b(c)d()e)</code></p>
-			</a>
-		</div>
-
+		{% for example in site.examples %}
+			<div class="list-group">
+				<a href="{{ site.baseurl }}/{{ example.path }}" class="list-group-item active">
+					<h4 class="list-group-item-heading">{{ example.title }}</h4>
+					<p class="list-group-item-text">{{ example.longDescription }}</p>
+				</a>
+			</div>
+        {% endfor %}
+		
 		More coming soon...
 	</div>
 </section>

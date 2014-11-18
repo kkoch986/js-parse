@@ -1,3 +1,13 @@
 
 
 baseurl: "/js-parse"
+
+examples:
+- title: Hello World Parser
+  shortDescription: A great jumping point to understanding the parser.
+  longDescription: An intro to creating parsers by starting from the basics.
+  path: examples/basic.html
+- title: Parentheses Matching
+  shortDescription: Learn how to create a slightly more advanced parser using regular-expression-based tokens and other techniques.
+  longDescription: A slightly more advanced grammar which can be used to identify strings of form <code>a(b(c)d()e)</code>
+  path: examples/matching.html
