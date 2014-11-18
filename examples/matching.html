@@ -1,13 +1,188 @@
 ---
 layout: default
-title: Parenthesis Example
+title: Parentheses Example
 ---
 
 <section id="docs">
     <div class="container">
-		<h1>Matching Parenthesis</h1>
-		<p>
-			Coming soon...
-		</p>
+		<h1>Matching Parentheses</h1>
+		<p>In this example, we will build a parser which builds trees out of matching parentheses. 
+		It will accept any string with correctly matched parentheses like: <code>(((((b)))))</code> or <code>a(b(cde)d(1)(f))d(fg(2(f)))</code></p>
+
+		<!-- Parser Description -->
+		<hr />
+		<h3>Creating the Parser Description</h3>
+		<p>We'll start with a basic parser description, then make some improvements as we go along.</p>
+		<code>
+			<pre>var parserDescription = {
+	"symbols":{
+		"(": { "terminal":true, "match":"\\(" },
+		")": { "terminal":true, "match":"\\)" },
+		"chars": { "terminal":true, "match":"[^\\(\\)]+" }
+	},
+	"productions":{
+		"S":[
+			[ "(", "S", ")" ],
+			[ "chars" ],
+		]
+	},
+	"startSymbols": [ "S" ]
+};</pre>
+		</code>
+		The grammar is a pretty simple one, it basically groups up the parentheses and allows some cahracters in the middle.
+		<br />
+
+		A few things of note here. The value of <code>match</code> when describing symbols is a regular expression string. 
+		This means you have to use proper escaping when trying to match symbols.
+		<br />
+		Also notice the <code>chars</code> symbol, the match string is a regular expression which matches any character beside parentheses.
+		The <code>match</code> string should be thought of a the lexing step of parsing, it will take the input string and break it out into tokens
+		which are then fed into the grammar. In the case of the input <code>(abc)</code> the lexing step will cause the parser to recieve the stream 
+		<code>"(" -> chars -> ")"</code>, the "abc" value is also preserved in the token so it can be accessed later.
+
+		<!-- Create the parser -->
+		<hr />
+		<h3>Create the rest of the parser</h3>
+		<p>As in the basic example, we will create a parser and give it our parser description:</p>
+		<code>
+			<pre>var Parser = require("../../lib/index").Parser.LRParser;
+
+// Create the parser
+var parser = Parser.CreateWithLexer(parserDescription);
+
+parser.on("accept", function(token_stack){
+	console.log("Parser Accept:", require('util').inspect(token_stack, true, 1000));
+});
+
+parser.on("error", function(error){
+	console.log("Parse Error: ", error.message);
+	throw error.message;
+});</pre>
+		</code>
+
+		<!-- First test -->
+		<hr /> 
+		<h3>Try it out</h3>
+		<p>Try out the parser in a few different cases and see that it only really works in pretty basic cases.</p>
+
+		<code>
+			<pre>var input = "((((bfa))))";
+parser.append(input);
+parser.end();</pre>
+		</code>
+
+		In that case it works, but in other simple variations it doesn't, <code>(a(b))</code>, <code>()</code> and <code>a(b(c(d)))</code> would fail this grammar.
+		We can pick up the empty parentheses case by adding a simple rule to our grammar, modify the <code>S</code> production to look like this:
+
+		<code>
+			<pre>"S":[
+	[ "(", "S", ")" ],
+	[ "(", ")" ],
+	[ "chars" ]
+]</pre>
+		</code>
+
+		As you can see, we added the <code>["(", ")"]</code> rule to our grammar. This will allow us to accept inputs like <code>()</code> or <code>((((()))))</code>.
+		<br />
+		<strong>Note the order of rules in the grammar dictates the order in which they'll be processed, this means the order is significant.</strong>
+
+		<!-- Second step -->
+		<hr />
+		But what about the more complicated inputs? The intro promised <code>a(b(cde)d(1)(f))d(fg(2(f)))</code>, and in this step we'll add the necessary rule to accomplish this.
+		Consider the BNF representation of our current grammar:
+
+		<pre>S -> ( S )
+S -> ( )
+S -> chars</pre>
+
+		It's clear if you follow through the grammar there that characters can only exist inside parentheses which rules out the possibility of accepting even basic strings like <code>(a(b))</code>.
+		We also need to be careful because this is an LR based parser and there are limits around the way grammars can be specified.
+		<Br /><br />
+		For instance, introducing the production <code>[ "S", "(", "S", ")", "S" ],</code> for <code>S</code> will result in whats known as a <strong>shift-reduce</strong> conflict, this is a fatal error 
+		in the grammar specification and will prevent the parser from being created.
+		<br /><br />
+		We can start by allowing preceeding <code>S</code> constructs before the parentheses, that will get us at least half way there:
+
+		<code>
+			<pre>"S":[
+	[ "S", "(", "S", ")" ],
+	[ "(", "S", ")" ],
+	[ "(", ")" ],
+	[ "chars" ]
+]</pre>
+		</code>
+
+		Now our grammar will accept strings like <code>(a(b))</code>, <code>a(b(c))</code> but not <code>a(b())</code>, thats easily fixed by adding <code>[ "S", "(", ")" ],</code> as the second rule.
+		Another string that won't be accepted is <code>a(b)c</code>. We've seen that we can't fix this by appending a rule like <code>["S", "(", "S", ")", "S"]</code> so what we need to do instead is just allow 
+		characters to appear at the end of the closing paren. Consider the following production object for <code>S</code>:
+
+		<code>
+			<pre>"S":[
+	[ "S", "(", "S", ")", "chars" ],
+	[ "S", "(", ")", "chars" ],
+	[ "(", "S", ")" ],
+	[ "(", ")" ],
+	[ "chars" ]
+]</pre>
+		</code>
+
+		You can now see by observing the parse tree, that the orginal input (<code>a(b(cde)d(1)(f))d(fg(2(f)))</code>) is now accepted. In the final step we'll add some options to the symbols to clean up the output.
+
+		<!-- Clean up the output -->
+		<hr />
+		<h3>Cleaning up the output using <code>excludeFromProduction</code></h3>
+		<p>By Using the <code>excludeFromProduction</code> flag, we can maintain the groupings of characters but remove the parentheses tokens from the grammar.</p>
+
+		The <code>excludeFromProduction</code> flag, when set on a symbol, means when it is to be reduced and merged into a production, create the production but leave this token out of it.
+		Its useful for cases like parentheses where the existance of the parens is not so important as the grouping that are created (these will be captured by <code>S</code> productions).
+
+		Change the <code>symbols</code> section of the parser description to look like this:
+
+		<code>
+			<pre>"symbols":{
+	"(": { "terminal":true, "match":"\\(", "excludeFromProduction":true },
+	")": { "terminal":true, "match":"\\)", "excludeFromProduction":true },
+	"chars": { "terminal":true, "match":"[^\\(\\)]+" }
+},</pre>
+		</code>
+
+		Now when you parse a string like <code>a(b)(c)</code> you'll see a result like the following:
+		<pre>Parser Accept: [ { head: 'S',
+    body: 
+     [ { head: 'S',
+         body: 
+          [ { head: 'S',
+              body: [ { type: 'chars', value: 'a' }, [length]: 1 ] },
+            { head: 'S',
+              body: [ { type: 'chars', value: 'b' }, [length]: 1 ] },
+            [length]: 2 ] },
+       { head: 'S',
+         body: [ { type: 'chars', value: 'c' }, [length]: 1 ] },
+       [length]: 2 ] },
+  [length]: 1 ]
+</pre>
+
+		Instead of 
+		<pre>Parser Accept: [ { head: 'S',
+    body: 
+     [ { head: 'S',
+         body: 
+          [ { head: 'S',
+              body: [ { type: 'chars', value: 'a' }, [length]: 1 ] },
+            { type: '(', value: '(' },
+            { head: 'S',
+              body: [ { type: 'chars', value: 'b' }, [length]: 1 ] },
+            { type: ')', value: ')' },
+            [length]: 4 ] },
+       { type: '(', value: '(' },
+       { head: 'S',
+         body: [ { type: 'chars', value: 'c' }, [length]: 1 ] },
+       { type: ')', value: ')' },
+       [length]: 4 ] },
+  [length]: 1 ]
+</pre>
+
+	<hr />
+	This is also an interesting chance to play with <code>mergeIntoParent</code> and <code>mergeRecursive</code> as described in the basic example. They produce interesting results when applied to the <code>S</code> symbol.
 	</div>
 </section>
