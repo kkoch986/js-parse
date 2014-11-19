@@ -20,15 +20,6 @@
 	THE SOFTWARE.
 */
 
-
-// assignment_operator -> '=' | '*=' | '/=' | '%=' | '+=' | '-=' | '&lt;&lt;=' | '>>=' | '&amp;=' | '^=' | '|='
-// add_operator -> "+" | "-"
-// mult_operator -> "*" | "/" | "%"
-// assignment_exp -> primary_exp assignment_operator add_exp
-// primary_exp -> literal | "(" primary_exp ")" | id
-// add_exp -> mult_exp | add_exp add_operator mult_exp
-// mult_exp -> primary_exp | mult_exp mult_operator primary_exp
-
 var Parser = require("../../lib/index").Parser.LRParser;
 
 var parserDescription = {
@@ -36,7 +27,7 @@ var parserDescription = {
 		"integer-literal":{
 			"terminal":true,
 			"match":"[\\+\\-]?[0-9]+",
-			"lookAhead":"[^\\.]$"
+			"lookAhead":"[^\\.]"
 		},
 		"float-literal":{
 			"terminal":true,
@@ -52,17 +43,17 @@ var parserDescription = {
 		},
 		"assignment_operator": {
 			"terminal":true,
-			"match":"(=)|(\\*=)|(/=)|(\\%=)|(\\+=)|(\\-=)(<<=)|(>>=)|(\\&=)|(\\^=)|(\\|=)"
+			"match":"((=)|(\\*=)|(/=)|(\\%=)|(\\+=)|(\\-=)(<<=)|(>>=)|(\\&=)|(\\^=)|(\\|=))"
 		},
 		"add_operator": {
 			"terminal":true,
-			"match":"(\\+)|(\\-)",
-			"lookAhead":"[^=]$"
+			"match":"((\\+)|(\\-))",
+			"lookAhead":"[^=]"
 		},
 		"mult_operator": {
 			"terminal":true,
-			"match":"(\\*)|(/)|(%)",
-			"lookAhead":"[^=]$"
+			"match":"((\\*)|(/)|(%))",
+			"lookAhead":"[^=]"
 		},
 		"open_paren": {
 			"terminal":true,
@@ -73,6 +64,20 @@ var parserDescription = {
 			"terminal":true,
 			"match":"\\)",
 			"excludeFromProduction":true
+		},
+		"semicolon": {
+			"terminal":true,
+			"match":";",
+			"excludeFromProduction":true
+		},
+		"whitespace": {
+			"terminal":true,
+			"match":"[ \n\t]+",
+			"includeInStream":false
+		},
+		"statement_list":{
+			"terminal":false,
+			"mergeRecursive":true
 		}
 	},
 	"productions":{
@@ -81,39 +86,47 @@ var parserDescription = {
 			[ "float-literal" ],
 			[ "string-literal" ]
 		],
+		"exp":[
+			["assignment_exp"],
+			["add_exp"]
+		],
 		"primary_exp":[
-			[ "open_paren", "primary_exp", "close_paren"],
+			[ "open_paren", "exp", "close_paren"],
 			[ "id" ],
 			[ "literal" ]
 		],
 		"add_exp":[
-			[ "mult_exp" ],
-			[ "add_exp", "add_operator", "mult_exp" ]
+			[ "mult_exp", "add_operator", "add_exp" ],
+			[ "mult_exp" ]
 		],
 		"mult_exp":[
-			[ "mult_exp", "mult_operator", "primary_exp" ],
+			[ "primary_exp", "mult_operator", "mult_exp" ],
 			[ "primary_exp" ]
 		],
 		"assignment_exp":[
-			[ "primary_exp", "assignment_operator", "add_exp" ]
+			[ "primary_exp", "assignment_operator", "exp" ]
+		],
+		"statement_list":[
+			[ "statement_list", "exp", "semicolon" ],
+			[ "exp", "semicolon" ]
 		]
 	},
-	"startSymbols": [ "assignment_exp", "add_exp" ]
+	"startSymbols": [ "statement_list" ]
 };
 
 // Create the parser
 var parser = Parser.CreateWithLexer(parserDescription);
 
-parser.getLexer().on("token", function(token){
-	console.log("token", token);
-});
+// parser.getLexer().on("token", function(token){
+// 	console.log("token", token);
+// });
 
-parser.on("production", function(head, body){
-	console.log("prod", head, body);
-});
+// parser.on("production", function(head, body){
+// 	console.log("prod", head, require('util').inspect(body, true, 1000));
+// });
 
 parser.on("accept", function(token_stack){
-	console.log("\n\nParser Accept:", require('util').inspect(token_stack, true, 1000));
+	console.log("\n\nParser Accept:" + parser.prettyPrint());
 });
 
 parser.on("error", function(error){
@@ -122,6 +135,6 @@ parser.on("error", function(error){
 });
 
 // Begin processing the input
-var input = 'a=b';
+var input = 'x = ((10 + 55) * 10 + 5) / 10; y = x; z = 10;';
 parser.append(input);
 parser.end();
