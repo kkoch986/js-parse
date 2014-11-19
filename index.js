@@ -19,42 +19,4 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 	THE SOFTWARE.
 */
-/**
-	RE -> UNION | SIMPLE_RE.
-	UNION -> RE "|" SIMPLE_RE.
-	SIMPLE_RE -> CONCAT | BASIC_RE.
-	CONCAT -> SIMPLE_RE BASIC_RE.
-	BASIC_RE -> STAR | PLUS | ELEM_RE.
-	STAR -> ELEM_RE "*".
-	PLUS -> ELEM_RE "+".
-	ELEM_RE -> GROUP | AND | EOS | CHAR | SET.
-	GROUP -> ( RE ).
-	ANY -> ".".
-	EOS -> "$".
-	CHAR -> NONMETACHAR | SLASH METACHAR.
-	SET -> POS_SET | NEG_SET.
-	POS_SET -> "[" SET_ITEMS "]".
-	NEG_SET -> "[" "^" SET_ITEMS "]".
-	SET_ITEMS -> SET_ITEM | SET_ITEM SET_ITEMS.
-	SET_ITEM -> RANGE | CHAR.
-	RANGE -> CHAR "-" CHAR.
-**/
-var Parser = require("./lib").Parser.LRParser;
-var pd = require("./examples/test.json");
-
-// Create the parser
-var parser = Parser.CreateWithLexer(pd);
-
-parser.on("accept", function(token_stack){
-	console.log("Parser Accept:", require('util').inspect(token_stack, true, 1000));
-});
-
-parser.on("error", function(error){
-	console.log("Parse Error: ", error.message);
-	throw error.message;
-});
-
-// Begin processing the input
-var input = "[a-zA-Z0-9]+([W]*)[0-9]+";
-parser.append(input);
-parser.end();
+module.exports = require("./lib");
