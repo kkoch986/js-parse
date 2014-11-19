@@ -13,6 +13,7 @@ title: C-Style Parsing
 			<li><a href='#literals'>Literals</a></li>
 			<li><a href='#math'>Basic Math Expressions</a></li>
 			<li><a href='#statement'>Statements and Statement Lists</a></li>
+			<li><a href='#tip'>Debugging Tip</a></li>
 		</ol>
 
 		<br /><br />
@@ -183,7 +184,7 @@ mult_exp -> primary_exp mult_operator mult_exp | primary_exp</pre>
 
 		<hr />
 		<!-- Statements and Statement lists -->
-		<h3>Statements and Statement Lists</h3>
+		<h3 id="statements">Statements and Statement Lists</h3>
 		<p>The final piece of the puzzle is to accept a program as a semicolor-delimited list of expressions.</p>
 		When finished our parser will accept any number of math or assignment expressions in sequence. The additions to the grammar will look something like this:
 
@@ -234,7 +235,7 @@ mult_exp -> primary_exp mult_operator mult_exp | primary_exp</pre>
 		Which makes much more sense.
 
 		<hr />
-		<h3>Quick Debugging Tip</h3>
+		<h3 id="tip">Quick Debugging Tip</h3>
 		<p>As your grammars get more and more complex, a few simple lines of code can give you a lot of insight into the parsing processs.</p>
 		By adding event handlers for basic lexing and parsing events, you can paint a picture of whats going on during the parse and help diagnose issues as they might arise.
 
