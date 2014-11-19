@@ -1,6 +1,6 @@
 {
   "name": "js-parse",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A generic shift-reduce parser for nodejs",
   "main": "index.js",
   "scripts": {
