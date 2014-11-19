@@ -20,29 +20,97 @@
 	THE SOFTWARE.
 */
 
+
+// assignment_operator -> '=' | '*=' | '/=' | '%=' | '+=' | '-=' | '&lt;&lt;=' | '>>=' | '&amp;=' | '^=' | '|='
+// add_operator -> "+" | "-"
+// mult_operator -> "*" | "/" | "%"
+// assignment_exp -> primary_exp assignment_operator add_exp
+// primary_exp -> literal | "(" primary_exp ")" | id
+// add_exp -> mult_exp | add_exp add_operator mult_exp
+// mult_exp -> primary_exp | mult_exp mult_operator primary_exp
+
 var Parser = require("../../lib/index").Parser.LRParser;
 
 var parserDescription = {
 	"symbols":{
-		"b": { "terminal":true, "match":"b", "excludeFromProduction":true },
-		"c": { "terminal":true, "match":"c" },
-		"d": { "terminal":true, "match":"d", "excludeFromProduction":true },
-		"C": { "terminal":false, "mergeIntoParent":true }
+		"integer-literal":{
+			"terminal":true,
+			"match":"[\\+\\-]?[0-9]+",
+			"lookAhead":"[^\\.]$"
+		},
+		"float-literal":{
+			"terminal":true,
+			"match":"[\\+\\-]?[0-9]*[\\.][0-9]+"
+		},
+		"string-literal":{
+			"terminal":true,
+			"match":"\"(.*)\""
+		},
+		"id":{
+			"terminal":true,
+			"match":"[a-zA-Z_][a-zA-Z0-9_]*"
+		},
+		"assignment_operator": {
+			"terminal":true,
+			"match":"(=)|(\\*=)|(/=)|(\\%=)|(\\+=)|(\\-=)(<<=)|(>>=)|(\\&=)|(\\^=)|(\\|=)"
+		},
+		"add_operator": {
+			"terminal":true,
+			"match":"(\\+)|(\\-)",
+			"lookAhead":"[^=]$"
+		},
+		"mult_operator": {
+			"terminal":true,
+			"match":"(\\*)|(/)|(%)",
+			"lookAhead":"[^=]$"
+		},
+		"open_paren": {
+			"terminal":true,
+			"match":"\\(",
+			"excludeFromProduction":true
+		},
+		"close_paren": {
+			"terminal":true,
+			"match":"\\)",
+			"excludeFromProduction":true
+		}
 	},
 	"productions":{
-		"S":[
-			[ "b", "C", "d" ]
+		"literal": [
+			[ "integer-literal" ],
+			[ "float-literal" ],
+			[ "string-literal" ]
 		],
-		"C":[
-			[ "c", "C" ],
-			[ "c" ]
+		"primary_exp":[
+			[ "open_paren", "primary_exp", "close_paren"],
+			[ "id" ],
+			[ "literal" ]
+		],
+		"add_exp":[
+			[ "mult_exp" ],
+			[ "add_exp", "add_operator", "mult_exp" ]
+		],
+		"mult_exp":[
+			[ "mult_exp", "mult_operator", "primary_exp" ],
+			[ "primary_exp" ]
+		],
+		"assignment_exp":[
+			[ "primary_exp", "assignment_operator", "add_exp" ]
 		]
 	},
-	"startSymbols": [ "S" ]
+	"startSymbols": [ "assignment_exp", "add_exp" ]
 };
 
 // Create the parser
 var parser = Parser.CreateWithLexer(parserDescription);
+
+parser.getLexer().on("token", function(token){
+	console.log("token", token);
+});
+
+parser.on("production", function(head, body){
+	console.log("prod", head, body);
+});
 
 parser.on("accept", function(token_stack){
 	console.log("\n\nParser Accept:", require('util').inspect(token_stack, true, 1000));
@@ -54,6 +122,6 @@ parser.on("error", function(error){
 });
 
 // Begin processing the input
-var input = "bccccccd";
+var input = 'a=b';
 parser.append(input);
 parser.end();
