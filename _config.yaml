@@ -11,3 +11,7 @@ examples:
   shortDescription: Learn how to create a slightly more advanced parser using regular-expression-based tokens and other techniques.
   longDescription: A slightly more advanced grammar which can be used to identify strings of form <code>a(b(c)d()e)</code>
   path: examples/matching.html
+- title: C-style Parser
+  shortDescription: A longer tutorial that builds a C-style programming language parser step by step.
+  longDescription: A step by step tutorial on creating a parser for C-style languages.
+  path: examples/c.html

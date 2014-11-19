@@ -1,0 +1,253 @@
+---
+layout: default
+title: C-Style Parsing
+---
+<section id="docs">
+    <div class="container">
+		<h1>Creating a Basic C Parser</h1>
+		<p>In this tutorial we will build a C-style language parser from the ground up. The final code can be found on the <a href='https://github.com/kkoch986/js-parse/tree/master/examples/site' target="_blank">js-parse github</a></p>
+
+		The steps of building the parser are as follows:
+		<br /><br />
+		<ol>
+			<li><a href='#literals'>Literals</a></li>
+			<li><a href='#math'>Basic Math Expressions</a></li>
+			<li><a href='#statement'>Statements and Statement Lists</a></li>
+		</ol>
+
+		<br /><br />
+		We'll start with a basic parsing script:
+
+		<code>
+			<pre>var Parser = require("../../lib/index").Parser.LRParser;
+
+var parserDescription = {
+	"symbols":{
+		
+	},
+	"productions":{
+		
+	},
+	"startSymbols": [  ]
+};
+
+// Create the parser
+var parser = Parser.CreateWithLexer(parserDescription);
+
+parser.on("accept", function(token_stack){
+	console.log("\n\nParser Accept:" + parser.prettyPrint());
+});
+
+parser.on("error", function(error){
+	console.log("Parse Error: ", error.message);
+	throw error.message;
+});</pre>
+		</code>
+
+		<hr />
+		<h3 id='literals'>Literals</h3>
+		<p>	
+			We will deal with only the basic literals, <code>float</code>, <code>integer</code> and <code>string</code>. 
+			Full C grammars may include literals for enumated types and other more compelx structures which we won't address in this example.
+		</p>
+		<br />
+		<h4>Numeric Literals</h4>
+		We will only cover basic numeric literals. We define an integer literal as a sequence of digits, potentially prefixed by a +/-.
+		We'll define a floating literal as a sequence of digits followed by a dot then optionally, more digits. 
+		You can refer to <a href='https://github.com/kkoch986/js-parse/blob/master/examples/php/lexical/literals.js' target="_blank"> this file</a> for more details on 
+		different types of literals, and more advanced representations.
+
+		<br /><br />
+		We can start with a naive implementation of integers and floats:
+
+		<code>
+			<pre>var parserDescription = {
+	"symbols":{
+		"integer-literal":{
+			"terminal":true,
+			"match":"[\\+\\-]?[0-9]+"
+		},
+		"float-literal":{
+			"terminal":true,
+			"match":"[\\+\\-]?[0-9]*[\\.][0-9]+"
+		}
+	},
+	"productions":{
+		"literal": [
+			[ "integer-literal" ],
+			[ "float-literal" ]
+		]
+	},
+	"startSymbols": [ "literal" ]
+};</pre>
+		</code>
+		<br />
+		On the surface this looks fine, but when we start testing it out we see that it has problems. Try the input <code>1234</code>, works no problem but when we try to feed a float into it <code>123.456</code> we get an error:
+
+		<pre>Parse Error: Expecting one of ['*$*'], got float-literal('.456')</pre>
+
+		What happened here is the parser picks up the <code>123</code> and calls it an integer, then it thinks its done since the only production allows for a single literal. The solution for this is simple,
+		we will add a lookhead for the tokenizer to make sure it doesn't recognize integers if they are followed by a "<code>.</code>". Using the following code for the <code>integer-literal</code> symbol makes it work a little better:
+
+		<code>
+			<pre>"integer-literal":{
+	"terminal":true,
+	"match":"[\\+\\-]?[0-9]+",
+	"lookAhead":"[^\\.]"
+},</pre>
+		</code>
+
+		<Br />
+		This will ensure that before recognizing an integer, the end of the string does not contain a dot. Now we have functioning, albeit basic, numeric types for our language.
+
+		<br /><br />
+		<h4>String literals</h4>
+		String literals are pretty straightforward since they are clearly delineated by quotes. For this example we will define a string literal as any characters inside of double-quotes.
+
+		<br />
+		We won't worry about escaped quotes, so we can represent strings simply as:
+
+		<code>
+			<pre>"string-literal":{
+	"terminal":true,
+	"match":"\"([^\"]*)\""
+}</pre>
+		</code>
+
+		Be sure to add <code>[ "string-literal" ]</code> to the <code>literal</code> production and test it out.
+
+		<br /><br />
+		<h4>Ids</h4>
+		Ids are another type of token that we want to extract, they are basically variable names and for our language we will match them with a regular expression <code>[a-zA-Z_][a-zA-Z0-9_]*</code>, just add the symbols for this one:
+
+		<code>
+			<pre>"id":{
+	"terminal":true,
+	"match":"[a-zA-Z_][a-zA-Z0-9_]*"	
+}</pre>
+		</code>
+
+		You can also add <code>id</code> to <code>startSymbols</code> if you want to test it out.
+
+		<hr />
+		<h3 id="math">Basic Math Expressions</h3>
+		<p>Now that we have the primitive elements we need, we can sketch out basic math expressions like assignment, addition multiplication etc...</p>
+		<br /><br />
+		For reference, in this step we will implement the following grammar:
+
+		<pre>
+assignment_operator -> '=' | '*=' | '/=' | '%=' | '+=' | '-='
+add_operator -> "+" | "-"
+mult_operator -> "*" | "/" | "%"
+exp -> assignmed_exp | add_exp
+assignment_exp -> primary_exp assignment_operator exp
+primary_exp -> literal | "(" exp ")" | id
+add_exp -> add_exp add_operator mult_exp | mult_exp
+mult_exp -> primary_exp mult_operator mult_exp | primary_exp</pre>
+
+		We start by adding some of the basic operators as terminal symbols as well as opening and closing parens:
+
+		<code>
+			<pre>"assignment_operator": {
+	"terminal":true,
+	"match":"((=)|(\\*=)|(/=)|(\\%=)|(\\+=)|(\\-=))"
+},
+"add_operator": {
+	"terminal":true,
+	"match":"((\\+)|(\\-))",
+	"lookAhead":"[^=]"
+},
+"mult_operator": {
+	"terminal":true,
+	"match":"((\\*)|(/)|(%))",
+	"lookAhead":"[^=]"
+},
+"open_paren": {
+	"terminal":true,
+	"match":"\\(",
+	"excludeFromProduction":true
+},
+"close_paren": {
+	"terminal":true,
+	"match":"\\)",
+	"excludeFromProduction":true
+}</pre>
+		</code>
+
+		<strong>Note</strong> that since the defined order of the symbols affects the way they are processed, the <code>lookAhead</code> properties on <code>add_operator</code> and <code>mult_operator</code>
+		are not srictly necessary. It doesn't hurt to have them and it allows not to have to worry about the order in which the symbols are defined.
+
+		<br /><br />
+
+		Set <code>startSymbols</code> to only contain <code>exp</code> and at this point our parser will accept a basic assignment or mathmatical expression such as <code>x = (10 + 55) * 10 + 5</code> or <code>((10 + 55) * 10 + 5) / 10</code>
+
+		<hr />
+		<!-- Statements and Statement lists -->
+		<h3>Statements and Statement Lists</h3>
+		<p>The final piece of the puzzle is to accept a program as a semicolor-delimited list of expressions.</p>
+		When finished our parser will accept any number of math or assignment expressions in sequence. The additions to the grammar will look something like this:
+
+		<pre>statement_list = exp ";" | statement_list exp ";"</pre>
+
+		<br /><br />
+		The modifications at this point are simple, we add a terminal symbol to match the semicolon, and a simple production corresponding to the production above:
+
+		<code>
+			<pre>"semicolon": {
+	"terminal":true,
+	"match":";",
+	"excludeFromProduction":true
+},</pre>
+		</code>
+
+		And...
+
+		<code>
+			<pre>"statement_list":[
+	[ "statement_list", "exp", "semicolon" ],
+	[ "exp", "semicolon" ]
+]</pre>
+		</code>
+
+		<code>startSymbols</code> should now contain only <code>statement_list</code>. Now we can run strings like "x = ((10 + 55) * 10 + 5) / 10; y = x; z = 10;" through the parser and get full parse trees.
+
+		<br /><br />
+		Notice when parsing the string above, the parse tree starts off with:
+
+		<pre>statement_list(
+	statement_list(
+		statement_list(</pre>
+
+		This is less than ideal, and simply adding a non-terminal symbol to the symbols object and giving it the option <code>mergeRecursive</code> will clean that right up. By adding the symbol:
+
+		<code>
+			<pre>"statement_list":{
+	"terminal":false,
+	"mergeRecursive":true
+}</pre>
+		</code>
+
+		We now get a parse like:
+
+		<pre>statement_list( exp(...), exp(...), exp(...) )</pre>
+
+		Which makes much more sense.
+
+		<hr />
+		<h3>Quick Debugging Tip</h3>
+		<p>As your grammars get more and more complex, a few simple lines of code can give you a lot of insight into the parsing processs.</p>
+		By adding event handlers for basic lexing and parsing events, you can paint a picture of whats going on during the parse and help diagnose issues as they might arise.
+
+		<code>
+			<pre>parser.getLexer().on("token", function(token){
+	console.log("token", token);
+});
+
+parser.on("production", function(head, body){
+	console.log("prod", head, require('util').inspect(body, true, 1000));
+});</pre>
+		</code>
+
+		This will print out every time a token is recognized or a production is created so you can tell whats going wrong in your parsing and diagnose errors in your parser description.
+	</div>
+</section>
