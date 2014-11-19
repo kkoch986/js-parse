@@ -43,7 +43,7 @@ var parserDescription = {
 		},
 		"assignment_operator": {
 			"terminal":true,
-			"match":"((=)|(\\*=)|(/=)|(\\%=)|(\\+=)|(\\-=)(<<=)|(>>=)|(\\&=)|(\\^=)|(\\|=))"
+			"match":"((=)|(\\*=)|(/=)|(\\%=)|(\\+=)|(\\-=))"
 		},
 		"add_operator": {
 			"terminal":true,
@@ -78,6 +78,10 @@ var parserDescription = {
 		"statement_list":{
 			"terminal":false,
 			"mergeRecursive":true
+		},
+		"primary_exp":{
+			"terminal":false,
+			"mergeIntoParent":true
 		}
 	},
 	"productions":{
@@ -85,6 +89,9 @@ var parserDescription = {
 			[ "integer-literal" ],
 			[ "float-literal" ],
 			[ "string-literal" ]
+		],
+		"statement":[
+			[ "exp" ]
 		],
 		"exp":[
 			["assignment_exp"],
@@ -107,8 +114,8 @@ var parserDescription = {
 			[ "primary_exp", "assignment_operator", "exp" ]
 		],
 		"statement_list":[
-			[ "statement_list", "exp", "semicolon" ],
-			[ "exp", "semicolon" ]
+			[ "statement_list", "statement", "semicolon" ],
+			[ "statement", "semicolon" ]
 		]
 	},
 	"startSymbols": [ "statement_list" ]
@@ -116,14 +123,6 @@ var parserDescription = {
 
 // Create the parser
 var parser = Parser.CreateWithLexer(parserDescription);
-
-// parser.getLexer().on("token", function(token){
-// 	console.log("token", token);
-// });
-
-// parser.on("production", function(head, body){
-// 	console.log("prod", head, require('util').inspect(body, true, 1000));
-// });
 
 parser.on("accept", function(token_stack){
 	console.log("\n\nParser Accept:" + parser.prettyPrint());
@@ -135,6 +134,6 @@ parser.on("error", function(error){
 });
 
 // Begin processing the input
-var input = 'x = ((10 + 55) * 10 + 5) / 10; y = x; z = 10;';
+var input = 'x = ((10 + 55) * 10 + 5) / 10; y = x * 2; y;';
 parser.append(input);
 parser.end();
