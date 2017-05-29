@@ -10,7 +10,7 @@
         "REWSS"
     ],
     "modules":{
-    	"REX":"examples/re/re.json"
+    	"REX":"re/re.json"
     },
     "symbols": {
         "WS": {

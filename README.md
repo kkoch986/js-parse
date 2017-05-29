@@ -301,6 +301,20 @@ Producing something much more tolerable:
 ArgList( Arg(a), Arg(b), Arg(c), Arg(d) )
 ```
 
+##### abandon
+
+The `abandon` option will cause the matched production to be dropped from the parser
+stack. This means when for all intents and purposes it vanishes from the parse
+tree. I added this option to support really incremental processing.
+
+For example, the `statement_list` defined in [NodePL](https://github.com/kkoch986/nodepl/blob/master/grammars/source.json#L28-L32).
+In that case I had no use for the statements once they were already parsed since
+they were handled by the EventEmitter. What would happen when parsing large files
+with a few thousand statements is it would parse pretty fast but on the file step
+it would have to traverse all the way back to the beginning of the file. This was
+a waste, so instead i drop them from the parse tree and a 10s parse is transformed
+into a 0.5s parse!
+
 ### Productions
 
 Defining the productions is the most crucial part of the parser description.
