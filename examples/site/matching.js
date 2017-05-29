@@ -19,4 +19,42 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 	THE SOFTWARE.
 */
-module.exports = require("./lib");
+
+var Parser = require("../../lib/index").Parser.LRParser;
+
+var parserDescription = {
+	"symbols":{
+		"(": { "terminal":true, "match":"\\(", "excludeFromProduction":true },
+		")": { "terminal":true, "match":"\\)", "excludeFromProduction":true },
+		"chars": { "terminal":true, "match":"[^\\(\\)]+" }
+	},
+	"productions":{
+		"S":[
+			[ "S", "(", "S", ")", "chars" ],
+			[ "S", "(", ")", "chars" ],
+			[ "S", "(", "S", ")" ],
+			[ "S", "(", ")" ],
+			[ "(", "S", ")" ],
+			[ "(", ")" ],
+			[ "chars" ]
+		]
+	},
+	"startSymbols": [ "S" ]
+};
+
+// Create the parser
+var parser = Parser.CreateWithLexer(parserDescription);
+
+parser.on("accept", function(token_stack){
+	console.log("Parser Accept:", require('util').inspect(token_stack, true, 1000));
+});
+
+parser.on("error", function(error){
+	console.log("Parse Error: ", error.message);
+	throw error.message;
+});
+
+// Begin processing the input
+var input = "a(b(c)d()e)";
+parser.append(input);
+parser.end();
